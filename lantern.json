@@ -1,0 +1,56 @@
+{
+	"name": "Lantern",
+	"type": "Animated",
+	"file": ["sprites/enemies.png"],
+	"rect": {
+		"width": 30,
+		"height": 30
+	},
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"frames": 5,
+	"cycles": [{
+		"name": "walk",
+		"cycle": ["left",
+		"center",
+		"right","center2"]
+	}],
+	"sprites": [{
+		"name": "base",
+		"x": 0,
+		"y": 0,
+		"w": 25,
+		"h": 31
+	},{
+		"name": "left",
+		"x": 0,
+		"y": 0,
+		"w": 25,
+		"h": 31
+	},
+	{
+		"name": "center",
+		"x": 29,
+		"y": 0,
+		"w": 25,
+		"h": 31
+	},
+	{
+		"name": "right",
+		"x": 60,
+		"y": 0,
+		"w": 25,
+		"h": 31
+	},
+	{
+		"name": "center2",
+		"x": 89,
+		"y": 0,
+		"w": 25,
+		"h": 31
+	}
+	]
+}

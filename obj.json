@@ -1,0 +1,43 @@
+{
+	"file": ["sprites/level.png"],
+	"bgcolor": {
+		"red": 0,
+		"green": 0,
+		"blue": 0
+	},
+	"sprites": [{
+		"name": "Floor1",
+		"x": 1,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor2",
+		"x": 47,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor3",
+		"x": 94,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor4",
+		"x": 151,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor5",
+		"x": 198,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	}]
+}
