@@ -12,6 +12,7 @@ from monster import Monster
 from camera import Camera
 from level import Platform, Bullet, Level
 from text import Text
+from menu import Menu
 
 class Game:
 
@@ -35,20 +36,25 @@ class Game:
 
     def load_game(self):
         self.clear()
-        self.load_level("level.json")
+        self.game_menu = Menu()
+        self.load_level('Template_level_02')
+        
+
+    def load_level(self, level):
+        self.clear()
+        self.add_level(level)
         self.add_camera()
         self.add_player("megaman.json", 500, 500)
         self.add_monster("lantern.json", constants.DWIDTH+10, constants.DHEIGHT/2)
         
-
     def exit_game(self):
         pygame.quit()
         sys.exit()
 
     #Add functions
 
-    def load_level(self, level):
-        self.level = Level(level)
+    def add_level(self, level):
+        self.level = Level(self.game_menu.get_level_json(level))
         self.level_sprite_list = self.level.build_level()
 
     def add_camera(self):
@@ -174,13 +180,14 @@ class Game:
                 if hasattr(self, 'player'):
                     self.player.go_right()
             if event.key == K_UP:
+                pass
+            if event.key == ord('x'):
                 if hasattr(self, 'player'):
                     self.player.go_up()
-                
             if event.key == K_DOWN:
                 if hasattr(self, 'player'):
                     self.player.go_down()
-            if event.key == K_SPACE:
+            if event.key == ord('z'):
                 if hasattr(self, 'player'):
                     self.add_bullet(self.player.shoot())
         if event.type == KEYUP:
@@ -196,10 +203,12 @@ class Game:
                 pass
             if event.key == K_DOWN:
                 pass
-            if event.key == K_SPACE:
+            if event.key == ord('x'):
+                pass
+            if event.key == ord('z'):
                 if hasattr(self, 'player'):
                     self.player.stop_shoot()
-            if event.key == ord('z'):
+            if event.key == ord('q'):
                 if self._pause:
                     self.resume()
                 else:

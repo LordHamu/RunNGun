@@ -62,22 +62,20 @@ class Level:
             tile_map[title] = tile_image
         self._object_list = tile_map
 
-    def parse_level_json(self, build_json):
+    def parse_level_json(self, data):
         file_json = []
-        with open(build_json) as data_file:
-            data = json.load(data_file)
-            for file in data['file']:
-                self.sprite_files.append(file)
-            self.bgcolor = (int(data['bgcolor']['red']),
-                            int(data['bgcolor']['green']),
-                            int(data['bgcolor']['blue']))
-            for sprite in data['sprites']:
-                file_json.append(sprite)
-            for platform in data['platforms']:
-                self.platforms.append(platform)
-            self.width = int(data['dimensions']['width']) * self.blocksize
-            self.height = int(data['dimensions']['height']) * self.blocksize
-            return file_json
+        for file in data['file']:
+            self.sprite_files.append(file)
+        self.bgcolor = (int(data['bgcolor']['red']),
+                        int(data['bgcolor']['green']),
+                        int(data['bgcolor']['blue']))
+        for sprite in data['sprites']:
+            file_json.append(sprite)
+        for platform in data['platforms']:
+            self.platforms.append(platform)
+        self.width = int(data['dimensions']['width']) * self.blocksize
+        self.height = int(data['dimensions']['height']) * self.blocksize
+        return file_json
         
     def build_level(self):
         level_list = []

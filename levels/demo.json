@@ -1,0 +1,84 @@
+{
+	"name": "Template_level",
+	"dimensions": {
+		"width": 100,
+		"height": 100
+	},
+	"file": ["sprites/level.png"],
+	"bgcolor": {
+		"red": 0,
+		"green": 0,
+		"blue": 0
+	},
+	"menu_tile": "sprites/demo.png",
+	"platforms": [{
+		"tile": "Floor2",
+		"x": 0,
+		"y": 99,
+		"w": 100,
+		"h": 1
+	},
+	{
+		"tile": "Floor2",
+		"x": 0,
+		"y": 0,
+		"w": 100,
+		"h": 1
+	},
+	{
+		"tile": "Floor2",
+		"x": 0,
+		"y": 0,
+		"w": 1,
+		"h": 100
+	},
+	{
+		"tile": "Floor2",
+		"x": 99,
+		"y": 0,
+		"w": 1,
+		"h": 100
+	},
+	{
+		"tile": "Floor2",
+		"x": 10,
+		"y": 20,
+		"w": 50,
+		"h": 1
+	}],
+	"sprites": [{
+		"name": "Floor1",
+		"x": 1,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor2",
+		"x": 47,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor3",
+		"x": 94,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor4",
+		"x": 151,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	},
+	{
+		"name": "Floor5",
+		"x": 198,
+		"y": 0,
+		"w": 47,
+		"h": 47
+	}]
+}

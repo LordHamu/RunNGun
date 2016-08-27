@@ -127,10 +127,10 @@ class Player(Pawn):
     def colide(self, x, y, level_list):
         for platform in level_list:
             if pygame.sprite.collide_rect(self, platform):
-                print(self.rect, platform.rect)
+                #print(self.rect, platform.rect)
                 if x > 0:
                     self.rect.right = platform.rect.left - 1
-                elif x < 0 :
+                if x < 0 :
                     self.rect.left = platform.rect.right + 1
                 if y > 0:
                     self.rect.bottom = platform.rect.top - 1
