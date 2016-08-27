@@ -28,7 +28,13 @@
 		"name": "blink",
 		"cycle": ["base",
 		"base",
+		"base",
+		"base",
+		"base",
 		"blink",
+		"base",
+		"base",
+		"base",
 		"base",
 		"base"]
 	}],

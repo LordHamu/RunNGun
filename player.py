@@ -37,16 +37,12 @@ class Player(Pawn):
         #Update JUMP
         if self._falling:
             self._change_y += 1
-            if self._change_y > 100: self._change_y = 100
+            if self._change_y > 30: self._change_y = 30
     
         self.rect.x += self._change_x
         self.colide(self._change_x, 0, level)
         self.rect.y += self._change_y
         self.colide(0, self._change_y, level)
-    
-        #Commented out bounding box drawing
-        #pygame.draw.rect(self.frame, constants.RED, self._bounding_rect, 1)
-        
 
     def draw(self):
         if self._falling:
@@ -78,6 +74,10 @@ class Player(Pawn):
                 self._blink = True
         if self.direction == "L":
             image = pygame.transform.flip(image, True, False)
+
+        #Commented out bounding box drawing
+        pygame.draw.rect(image, constants.RED, self.rect, 1)
+
         return image
 
     # Player-controlled movement:
@@ -95,11 +95,14 @@ class Player(Pawn):
         self.walk = True
         self.cycle_frame = 0
 
-    def go_up(self):
+    def jump(self):
         if not self._falling:
             self._change_y = -12
             self._falling = True
         self.cycle_frame = 0
+
+    def go_up(self):
+        pass
             
     def go_down(self):
         pass

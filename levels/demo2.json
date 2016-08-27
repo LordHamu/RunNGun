@@ -1,7 +1,7 @@
 {
 	"name": "Template_level_02",
 	"dimensions": {
-		"width": 20,
+		"width": 22,
 		"height": 20
 	},
 	"file": ["sprites/level.png"],
@@ -15,14 +15,14 @@
 		"tile": "Floor2",
 		"x": 0,
 		"y": 19,
-		"w": 20,
+		"w": 22,
 		"h": 1
 	},
 	{
 		"tile": "Floor2",
 		"x": 0,
 		"y": 0,
-		"w": 20,
+		"w": 22,
 		"h": 1
 	},
 	{
@@ -34,7 +34,7 @@
 	},
 	{
 		"tile": "Floor2",
-		"x": 19,
+		"x": 21,
 		"y": 0,
 		"w": 1,
 		"h": 20
@@ -43,7 +43,7 @@
 		"tile": "Floor2",
 		"x": 10,
 		"y": 10,
-		"w": 10,
+		"w": 12,
 		"h": 1
 	},
 	{

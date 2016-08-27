@@ -37,15 +37,15 @@ class Game:
     def load_game(self):
         self.clear()
         self.game_menu = Menu()
-        self.load_level('Template_level_02')
+        self.load_level('Template_level')
         
 
     def load_level(self, level):
         self.clear()
         self.add_level(level)
         self.add_camera()
-        self.add_player("megaman.json", 500, 500)
-        self.add_monster("lantern.json", constants.DWIDTH+10, constants.DHEIGHT/2)
+        self.add_player("json\\megaman.json", 500, 500)
+        self.add_monster("json\\lantern.json", constants.DWIDTH+10, constants.DHEIGHT/2)
         
     def exit_game(self):
         pygame.quit()
@@ -183,7 +183,7 @@ class Game:
                 pass
             if event.key == ord('x'):
                 if hasattr(self, 'player'):
-                    self.player.go_up()
+                    self.player.jump()
             if event.key == K_DOWN:
                 if hasattr(self, 'player'):
                     self.player.go_down()
