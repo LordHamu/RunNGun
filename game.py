@@ -18,6 +18,7 @@ class Game:
 
     def __init__(self):
         self._pause = False
+        self.backdrop = constants.BLACK
         self.monster_sprite_list = pygame.sprite.Group()
         self.bullet_sprite_list = pygame.sprite.Group()
         self.player_sprite_list = pygame.sprite.Group()
@@ -37,15 +38,13 @@ class Game:
     def load_game(self):
         self.clear()
         self.game_menu = Menu()
-        self.load_level('Template_level')
+        self.load_level('Mario 1-1')
         
 
     def load_level(self, level):
         self.clear()
         self.add_level(level)
         self.add_camera()
-        self.add_player("json\\megaman.json", 500, 500)
-        self.add_monster("json\\lantern.json", constants.DWIDTH+10, constants.DHEIGHT/2)
         
     def exit_game(self):
         pygame.quit()
@@ -56,6 +55,8 @@ class Game:
     def add_level(self, level):
         self.level = Level(self.game_menu.get_level_json(level))
         self.level_sprite_list = self.level.build_level()
+        self.backdrop = self.level.backdrop
+        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y)
 
     def add_camera(self):
         self.camera = Camera(self.level.width, self.level.height)

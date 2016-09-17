@@ -28,6 +28,8 @@ class SpriteSheet(object):
 
         # Create a new blank image
         image = pygame.Surface([char_width, char_height]).convert()
+        image.fill(color)
+        image.set_colorkey(color)
 
         # Do calculations to find the middle and center it based on that.
         off_x = (char_width - width)/2

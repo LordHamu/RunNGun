@@ -14,7 +14,8 @@ class Player(Pawn):
         self._invuln = False
         self._blink = True    
         Pawn.__init__(self, build_json)
-        self.rect = pygame.Rect((self.char_x/3, self.char_y/4),((self.char_x/3), self.char_y))
+        self.rect = pygame.Rect((self.char_x/2, self.char_y/4),
+                                ((self.char_x*2/3), self.char_y))
     
     def update(self, monsters, level):
 
@@ -97,7 +98,7 @@ class Player(Pawn):
 
     def jump(self):
         if not self._falling:
-            self._change_y = -12
+            self._change_y = -20
             self._falling = True
         self.cycle_frame = 0
 

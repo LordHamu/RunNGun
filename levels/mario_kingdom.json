@@ -1,0 +1,135 @@
+{
+	"name": "Mario 1-1",
+	"dimensions": {
+		"width": 215,
+		"height": 20
+	},
+	"file": ["sprites/Mario_Tiles_01.png"],
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"background_fill": {
+		"red": 92,
+		"green": 148,
+		"blue": 252
+	},
+	"player_start":{ 
+		"x": 3,
+		"y": 17
+	},
+	"menu_tile": "sprites/Mario_1_1.png",
+	"platforms": [{
+		"tile": "brick",
+		"x": 0,
+		"y": 19,
+		"w": 70,
+		"h": 2
+	},
+	{
+		"tile": "brick",
+		"x": -1,
+		"y": 0,
+		"w": 1,
+		"h": 20
+	},
+	{
+		"tile": "brick",
+		"x": 73,
+		"y": 19,
+		"w": 15,
+		"h": 2
+	},
+	{
+		"tile": "brick",
+		"x": 91,
+		"y": 19,
+		"w": 65,
+		"h": 2
+	},
+	{
+		"tile": "brick",
+		"x": 158,
+		"y": 19,
+		"w": 57,
+		"h": 2
+	},
+	{
+		"tile": "pipe_bottom_left",
+		"x": 29,
+		"y": 18,
+		"w": 1,
+		"h": 1
+	},
+	{
+		"tile": "pipe_bottom_right",
+		"x": 30,
+		"y": 18,
+		"w": 1,
+		"h": 1
+	},
+	{
+		"tile": "pipe_top_left",
+		"x": 29,
+		"y": 17,
+		"w": 1,
+		"h": 1
+	},
+	{
+		"tile": "pipe_top_right",
+		"x": 30,
+		"y": 17,
+		"w": 1,
+		"h": 1
+	}],
+	"sprites": [{
+		"name": "brick",
+		"x": 0,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "b_brick",
+		"x": 50,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "pipe_top_left",
+		"x": 100,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "pipe_top_right",
+		"x": 150,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "?_block",
+		"x": 200,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "pipe_bottom_left",
+		"x": 100,
+		"y": 50,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "pipe_bottom_right",
+		"x": 150,
+		"y": 50,
+		"w": 50,
+		"h": 50
+	}]
+}

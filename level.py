@@ -5,8 +5,9 @@ from sprite import SpriteSheet
 class Platform(pygame.sprite.Sprite):
     def __init__(self, tile, width, height):
         pygame.sprite.Sprite.__init__(self)
-        self.image = Surface((47*width, 47*height))
-        self.image.convert()
+        self.image = Surface((47*width, 47*height)).convert()
+        self.image.fill((240,123,255))
+        self.image.set_colorkey((240,123,255))
         for y in range(height):
             for x in range(width):
                 self.image.blit(tile, (x*47, y*47))
@@ -75,6 +76,11 @@ class Level:
             self.platforms.append(platform)
         self.width = int(data['dimensions']['width']) * self.blocksize
         self.height = int(data['dimensions']['height']) * self.blocksize
+        self.player_x = int(data['player_start']['x']) * self.blocksize
+        self.player_y = int(data['player_start']['y']) * self.blocksize
+        self.backdrop = (int(data['background_fill']['red']),
+                        int(data['background_fill']['green']),
+                        int(data['background_fill']['blue']))
         return file_json
         
     def build_level(self):

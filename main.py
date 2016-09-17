@@ -33,7 +33,7 @@ class GameMain:
         self._game.update()
 
     def on_render(self):
-        self._display_surface.fill(constants.BLACK)
+        self._display_surface.fill(self._game.backdrop)
         self._display_surface = self._game.draw(self._display_surface)
         pygame.display.update()
         self.mainClock.tick(30)

@@ -10,7 +10,11 @@
 		"green": 0,
 		"blue": 0
 	},
-	"menu_tile": "sprites/demo.png",
+	"player_start":{ 
+		"x": 0,
+		"y": 0
+	},
+	"menu_tile": "sprites/demo_tile2.png",
 	"platforms": [{
 		"tile": "Floor2",
 		"x": 0,
