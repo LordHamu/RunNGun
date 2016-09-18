@@ -13,6 +13,16 @@ class Platform(pygame.sprite.Sprite):
                 self.image.blit(tile, (x*47, y*47))
         self.rect = self.image.get_rect()
 
+class Scenery(pygame.sprite.Sprite):
+    def __init__(self, tile, width, height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = Surface((width, height)).convert()
+        self.image.fill((240,123,255))
+        self.image.set_colorkey((240,123,255))
+        self.image.blit(tile, (0, 0))
+        self.rect = self.image.get_rect()
+
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, level):
         import constants
@@ -74,6 +84,8 @@ class Level:
             file_json.append(sprite)
         for platform in data['platforms']:
             self.platforms.append(platform)
+        for scenery in data['scenery']:
+            self.scenery.append(scenery)
         self.width = int(data['dimensions']['width']) * self.blocksize
         self.height = int(data['dimensions']['height']) * self.blocksize
         self.player_x = int(data['player_start']['x']) * self.blocksize

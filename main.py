@@ -20,10 +20,12 @@ class GameMain:
     def __init__(self):
         self._running = True
         self._display_surface = None
+        self.tick = 30
         self.size = self.width, self.height = constants.DWIDTH, constants.DHEIGHT
 
     def on_init(self):
         pygame.init()
+        pygame.key.set_repeat(self.tick * 5,self.tick * 5)
         self._display_surface = pygame.display.set_mode(self.size, 0, 32)
         pygame.display.set_caption('Basic Run & Gun')
         self._running = True
@@ -36,7 +38,7 @@ class GameMain:
         self._display_surface.fill(self._game.backdrop)
         self._display_surface = self._game.draw(self._display_surface)
         pygame.display.update()
-        self.mainClock.tick(30)
+        self.mainClock.tick(self.tick)
 
     def on_cleanup(self):
         pygame.quit()

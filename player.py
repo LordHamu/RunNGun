@@ -9,16 +9,17 @@ class Player(Pawn):
         self._player_max_hp = 100
         self._player_hp = 100
         self._invuln_timer = 300
+        self._shooting_timer = 30
+        self.cycle_frame = 0
         self._falling = True
         self._shooting = False
         self._invuln = False
         self._blink = True    
         Pawn.__init__(self, build_json)
-        self.rect = pygame.Rect((self.char_x/2, self.char_y/4),
+        self.rect = pygame.Rect((self.char_x*3/5, self.char_y/4),
                                 ((self.char_x*2/3), self.char_y))
     
     def update(self, monsters, level):
-
         hits_list = pygame.sprite.spritecollide(self, monsters, False)
         for hit in hits_list:
             if self._invuln:
@@ -35,11 +36,9 @@ class Player(Pawn):
             self._blink = True
             self._invuln_timer = 300
 
-        #Update JUMP
-        if self._falling:
-            self._change_y += 1
-            if self._change_y > 30: self._change_y = 30
-    
+        self._change_y += 2
+        if self._change_y > 30: self._change_y = 30
+        
         self.rect.x += self._change_x
         self.colide(self._change_x, 0, level)
         self.rect.y += self._change_y
@@ -61,6 +60,7 @@ class Player(Pawn):
                 cycle = self.cycle['blink']
             if cycleNum >= (len(cycle)-1):
                 self.cycle_frame = 0
+                cycleNum = 0
             frame = cycle[cycleNum]
             image = self.sprite_list[frame].copy()
             self.cycle_frame = self.cycle_frame + 1
@@ -87,18 +87,16 @@ class Player(Pawn):
         self._change_x = -12
         self.direction = "L"
         self.walk = True
-        self.cycle_frame = 0
 
     def go_right(self):
         """ Called when the user hits the right arrow. """
         self._change_x = 12
         self.direction = "R"
         self.walk = True
-        self.cycle_frame = 0
 
     def jump(self):
         if not self._falling:
-            self._change_y = -20
+            self._change_y = -30
             self._falling = True
         self.cycle_frame = 0
 
@@ -129,6 +127,7 @@ class Player(Pawn):
         return True
 
     def colide(self, x, y, level_list):
+        self._falling = True
         for platform in level_list:
             if pygame.sprite.collide_rect(self, platform):
                 #print(self.rect, platform.rect)
@@ -142,6 +141,7 @@ class Player(Pawn):
                     self._change_y = 0
                 elif y < 0:
                     self.rect.top = platform.rect.bottom + 1
+                    self._change_y = 0
 
     def get_life(self):
         return self._player_hp
