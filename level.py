@@ -22,7 +22,6 @@ class Scenery(pygame.sprite.Sprite):
         self.image.blit(tile, (0, 0))
         self.rect = self.image.get_rect()
 
-
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, level):
         import constants
@@ -68,8 +67,8 @@ class Level:
                                                 int(tile['w']),
                                                 int(tile['h']),
                                                 self.bgcolor,
-                                                self.blocksize,
-                                                self.blocksize)
+                                                int(tile['w']),
+                                                int(tile['h']))
             title = tile['name']
             tile_map[title] = tile_image
         self._object_list = tile_map
@@ -119,3 +118,14 @@ class Level:
             ladder.rect.y = int(l['y'])* self.blocksize
             l_list.append(ladder)
         return l_list
+    
+    def build_scenery(self):
+        s_list = []
+        for s in self.ladders:
+            bgobject = Scenery(self._object_list[s['tile']],
+                                s['w'],
+                                s['h'])
+            bgobject.rect.x = int(s['x'])* self.blocksize
+            bgobject.rect.y = int(s['y'])* self.blocksize
+            s_list.append(bgobject)
+        return s_list

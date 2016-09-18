@@ -21,6 +21,7 @@ class Game:
         self._pause = False
         self.backdrop = constants.BLACK
         self.monster_sprite_list = pygame.sprite.Group()
+        self.scenery_sprite_list = pygame.sprite.Group()
         self.bullet_sprite_list = pygame.sprite.Group()
         self.player_sprite_list = pygame.sprite.Group()
         self.platform_sprite_list = pygame.sprite.Group()
@@ -57,6 +58,7 @@ class Game:
 
     def add_level(self, level):
         self.level = Level(self.game_menu.get_level_json(level))
+        self.scenery_sprite_list = self.level.build_scenery()
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
         self.backdrop = self.level.backdrop
@@ -142,7 +144,6 @@ class Game:
     def update(self):
         #print(len(self.active_sprite_list)) //Used to check number of objects floating around.
         if not (self._pause):
-            #self.level_sprite_list.update()
             self.player_sprite_list.update(self.monster_sprite_list.sprites(),
                                            self.platform_sprite_list,
                                            self.ladder_sprite_list)
