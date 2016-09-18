@@ -37,6 +37,13 @@
 		"base",
 		"base",
 		"base"]
+	},
+	{
+		"name": "climb",
+		"cycle":["climb01",
+		"climb02",
+		"climb01",
+		"climb02"]
 	}],
 	"sprites": [{
 		"name": "warp1",
@@ -142,5 +149,26 @@
 		"y": 129,
 		"w": 66,
 		"h": 70
+	},
+	{
+		"name": "climb01",
+		"x": 133,
+		"y": 256,
+		"w": 40,
+		"h": 67
+	},
+	{
+		"name": "climb02",
+		"x": 288,
+		"y": 254,
+		"w": 40,
+		"h": 67
+	},
+	{
+		"name": "climbshoot",
+		"x": 226,
+		"y": 256,
+		"w": 60,
+		"h": 68
 	}]
 }

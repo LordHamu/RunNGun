@@ -20,7 +20,6 @@
 		"y": 17
 	},
 	"menu_tile": "sprites/Mario_1_1.png",
-	"scenery":[],
 	"sprites": [{
 		"name": "brick",
 		"x": 0,
@@ -64,6 +63,13 @@
 		"h": 50
 	},
 	{
+		"name": "ladder",
+		"x": 300,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	},
+	{
 		"name": "pipe_bottom_left",
 		"x": 100,
 		"y": 50,
@@ -77,9 +83,21 @@
 		"w": 50,
 		"h": 50
 	}],
-	
-	
-	
+	"scenery":[],
+	"ladders":[{
+		"tile": "ladder",
+		"x": 0,
+		"y": 0,
+		"w": 1,
+		"h": 19
+	},
+	{
+		"tile": "ladder",
+		"x": 191,
+		"y": 11,
+		"w": 1,
+		"h": 8
+	}],
 	"platforms": [{
 		"tile": "brick",
 		"x": 0,
@@ -96,7 +114,7 @@
 	},
 	{
 		"tile": "brick",
-		"x": 216,
+		"x": 215,
 		"y": 0,
 		"w": 1,
 		"h": 20
@@ -119,7 +137,7 @@
 		"tile": "brick",
 		"x": 156,
 		"y": 19,
-		"w": 59,
+		"w": 60,
 		"h": 2
 	}, 
 	{

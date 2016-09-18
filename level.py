@@ -12,7 +12,7 @@ class Platform(pygame.sprite.Sprite):
             for x in range(width):
                 self.image.blit(tile, (x*47, y*47))
         self.rect = self.image.get_rect()
-
+        
 class Scenery(pygame.sprite.Sprite):
     def __init__(self, tile, width, height):
         pygame.sprite.Sprite.__init__(self)
@@ -53,6 +53,7 @@ class Level:
         self._object_list = {}
         self.sprite_files = []
         self.platforms = []
+        self.ladders = []
         self.blocksize = 47
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
@@ -84,6 +85,8 @@ class Level:
             file_json.append(sprite)
         for platform in data['platforms']:
             self.platforms.append(platform)
+        for ladder in data['ladders']:
+            self.ladders.append(ladder)
         for scenery in data['scenery']:
             self.scenery.append(scenery)
         self.width = int(data['dimensions']['width']) * self.blocksize
@@ -95,15 +98,24 @@ class Level:
                         int(data['background_fill']['blue']))
         return file_json
         
-    def build_level(self):
-        level_list = []
+    def build_platforms(self):
+        p_list = []
         for p in self.platforms:
             platform = Platform(self._object_list[p['tile']],
                                 p['w'],
                                 p['h'])
             platform.rect.x = int(p['x'])* self.blocksize
             platform.rect.y = int(p['y'])* self.blocksize
-            level_list.append(platform)
-        return level_list
+            p_list.append(platform)
+        return p_list
         
-        
+    def build_ladders(self):
+        l_list = []
+        for l in self.ladders:
+            ladder = Platform(self._object_list[l['tile']],
+                                l['w'],
+                                l['h'])
+            ladder.rect.x = int(l['x'])* self.blocksize
+            ladder.rect.y = int(l['y'])* self.blocksize
+            l_list.append(ladder)
+        return l_list

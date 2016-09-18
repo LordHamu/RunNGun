@@ -22,7 +22,8 @@ class Game:
         self.monster_sprite_list = pygame.sprite.Group()
         self.bullet_sprite_list = pygame.sprite.Group()
         self.player_sprite_list = pygame.sprite.Group()
-        self.level_sprite_list = pygame.sprite.Group()
+        self.platform_sprite_list = pygame.sprite.Group()
+        self.ladder_sprite_list = pygame.sprite.Group()
         self.ui_list = []
         self.load_menu()
 
@@ -54,7 +55,8 @@ class Game:
 
     def add_level(self, level):
         self.level = Level(self.game_menu.get_level_json(level))
-        self.level_sprite_list = self.level.build_level()
+        self.platform_sprite_list = self.level.build_platforms()
+        self.ladder_sprite_list = self.level.build_ladders()
         self.backdrop = self.level.backdrop
         self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y)
 
@@ -136,7 +138,8 @@ class Game:
         if not (self._pause):
             #self.level_sprite_list.update()
             self.player_sprite_list.update(self.monster_sprite_list.sprites(),
-                                           self.level_sprite_list)
+                                           self.platform_sprite_list,
+                                           self.ladder_sprite_list)
             self.monster_sprite_list.update(self.bullet_sprite_list.sprites())
             self.bullet_sprite_list.update()
         if hasattr(self, 'camera'):
@@ -144,8 +147,10 @@ class Game:
 
     def draw(self, screen):
         #Only draw whats actually on camera
-        for block in self.level_sprite_list:
-            screen.blit(block.image, self.camera.apply(block))
+        for ladder in self.ladder_sprite_list:
+            screen.blit(ladder.image, self.camera.apply(ladder))
+        for platform in self.platform_sprite_list:
+            screen.blit(platform.image, self.camera.apply(platform))
         for monster in self.monster_sprite_list:
             screen.blit(monster.image, self.camera.apply(monster))
         for bullet in self.bullet_sprite_list:
@@ -181,13 +186,14 @@ class Game:
                 if hasattr(self, 'player'):
                     self.player.go_right()
             if event.key == K_UP:
-                pass
+                if hasattr(self, 'player'):
+                    self.player.go_up(self.ladder_sprite_list)
+            if event.key == K_DOWN:
+                if hasattr(self, 'player'):
+                    self.player.go_down(self.ladder_sprite_list)
             if event.key == ord('x'):
                 if hasattr(self, 'player'):
                     self.player.jump()
-            if event.key == K_DOWN:
-                if hasattr(self, 'player'):
-                    self.player.go_down()
             if event.key == ord('z'):
                 if hasattr(self, 'player'):
                     self.add_bullet(self.player.shoot())
@@ -196,14 +202,16 @@ class Game:
                     self.exit_game()
             if event.key == K_LEFT:
                 if hasattr(self, 'player'):
-                    self.player.stop()
+                    self.player.stop(self.ladder_sprite_list)
             if event.key == K_RIGHT:
                 if hasattr(self, 'player'):
-                    self.player.stop()
+                    self.player.stop(self.ladder_sprite_list)
             if event.key == K_UP:
-                pass
+                if hasattr(self, 'player'):
+                    self.player.stop(self.ladder_sprite_list)
             if event.key == K_DOWN:
-                pass
+                if hasattr(self, 'player'):
+                    self.player.stop(self.ladder_sprite_list)
             if event.key == ord('x'):
                 pass
             if event.key == ord('z'):
