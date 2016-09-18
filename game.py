@@ -13,6 +13,7 @@ from camera import Camera
 from level import Platform, Bullet, Level
 from text import Text
 from menu import Menu
+from hpbar import Lifebar
 
 class Game:
 
@@ -46,6 +47,7 @@ class Game:
         self.clear()
         self.add_level(level)
         self.add_camera()
+        self.add_lifebar()
         
     def exit_game(self):
         pygame.quit()
@@ -62,7 +64,11 @@ class Game:
 
     def add_camera(self):
         self.camera = Camera(self.level.width, self.level.height)
-    
+
+    def add_lifebar(self):
+        self.lifebar = Lifebar( 25, 25, 20, 200, True)
+        self.lifebar.set_hp(self.player.get_max_life())
+        
     def add_title(self, title):
         TextSurf, TextRect = Text.text_objects(title, constants.largeText, constants.WHITE)
         TextRect.center = ((constants.DWIDTH / 2), ((constants.DHEIGHT / 2) - 100))
@@ -144,6 +150,8 @@ class Game:
             self.bullet_sprite_list.update()
         if hasattr(self, 'camera'):
             self.camera.update(self.player)
+        if hasattr(self, 'lifebar'):
+            self.lifebar.update(self.player)
 
     def draw(self, screen):
         #Only draw whats actually on camera
@@ -171,6 +179,8 @@ class Game:
                     pygame.draw.rect(screen, ui['ic'],rect)
             else:
                 screen.blit(ui['surface'],ui['rectangle'])
+        if hasattr(self, 'lifebar'):
+            screen = self.lifebar.draw(screen)
         return screen
 
     # Giant Tree of Input parsing!

@@ -179,6 +179,9 @@ class Player(Pawn):
     def get_life(self):
         return self._player_hp
 
+    def get_max_life(self):
+        return self._player_max_hp
+
     def take_damage(self, dam):
         self._player_hp = self._player_hp - dam
         if self._player_hp < 0:

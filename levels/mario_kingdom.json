@@ -84,13 +84,7 @@
 		"h": 50
 	}],
 	"scenery":[],
-	"ladders":[{
-		"tile": "ladder",
-		"x": 0,
-		"y": 0,
-		"w": 1,
-		"h": 19
-	},
+	"ladders":[
 	{
 		"tile": "ladder",
 		"x": 191,
