@@ -26,6 +26,7 @@ class Game:
         self.player_sprite_list = pygame.sprite.Group()
         self.platform_sprite_list = pygame.sprite.Group()
         self.ladder_sprite_list = pygame.sprite.Group()
+        self.door_sprite_list = pygame.sprite.Group()
         self.ui_list = []
         self.load_menu()
 
@@ -34,42 +35,55 @@ class Game:
         self.clear()
         self.add_title("Run & Gun")
         self.add_button("New",(constants.DWIDTH/2)-50, 350, 100,50,
-                        constants.WHITE, constants.BLUE, self.load_game)
+                        constants.WHITE, constants.BLUE, self.start_game)
         self.add_button("Quit",(constants.DWIDTH/2)-50, 450, 100,50,
                         constants.WHITE, constants.BLUE, self.exit_game)
 
-    def load_game(self):
+    def start_game(self):
         self.clear()
+        self.lives = 3
         self.game_menu = Menu()
-        self.load_level('Mario 1-1')
-        
-
-    def load_level(self, level):
-        self.clear()
-        self.add_level(level)
-        self.add_camera()
-        self.add_lifebar()
+        self.current_level = ['Mario 1-3', 0, 0, "R"]
+        self.load_level(self.current_level)
         
     def exit_game(self):
         pygame.quit()
         sys.exit()
 
-    #Add functions
+    def load_level(self, level):
+        self.clear()
+        print(level)
+        self.level = Level(self.game_menu.get_level_json(level[0]))
+        if level[1] != 0:
+            self.level.player_x = level[1]
+        if level[2] != 0:
+            self.level.player_y = level[2]
+        self.scenery_sprite_list = self.level.build_scenery()
+        self.platform_sprite_list = self.level.build_platforms()
+        self.ladder_sprite_list = self.level.build_ladders()
+        self.door_sprite_list = self.level.build_doors()
+        self.backdrop = self.level.backdrop
+        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y, level[3])
+        self.add_camera()
+        self.add_lifebar(25, 25, self.player.get_max_life())
 
-    def add_level(self, level):
-        self.level = Level(self.game_menu.get_level_json(level))
+    def reload_level(self):
+        self.clear()
         self.scenery_sprite_list = self.level.build_scenery()
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
         self.backdrop = self.level.backdrop
-        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y)
+        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y, "R")
+        self.add_camera()
+        self.add_lifebar(25, 25, self.player.get_max_life())
 
+    #Add functions
     def add_camera(self):
         self.camera = Camera(self.level.width, self.level.height)
 
-    def add_lifebar(self):
-        self.lifebar = Lifebar( 25, 25, 20, 200, True)
-        self.lifebar.set_hp(self.player.get_max_life())
+    def add_lifebar(self, x, y, hp):
+        self.lifebar = Lifebar( x, y, 20, 200, True)
+        self.lifebar.set_hp(hp)
         
     def add_title(self, title):
         TextSurf, TextRect = Text.text_objects(title, constants.largeText, constants.WHITE)
@@ -118,20 +132,31 @@ class Game:
             obj.rect.y = y
             self.level_sprite_list.add(obj)
         
-    def add_player(self, json, x, y):
+    def add_player(self, json, x, y, d):
         self.player = Player(json)
         self.player.rect.x = x
         self.player.rect.y = y
+        self.player.direction = d
         self.player_sprite_list.add(self.player)
     
     #Helper functions
 
     def clear(self):
-        self.ui_list = []
-        self.level_sprite_list = pygame.sprite.Group()
+        self.backdrop = constants.BLACK
         self.monster_sprite_list = pygame.sprite.Group()
-        self.player_sprite_list = pygame.sprite.Group()
+        self.scenery_sprite_list = pygame.sprite.Group()
         self.bullet_sprite_list = pygame.sprite.Group()
+        self.player_sprite_list = pygame.sprite.Group()
+        self.platform_sprite_list = pygame.sprite.Group()
+        self.ladder_sprite_list = pygame.sprite.Group()
+        self.door_sprite_list = pygame.sprite.Group()
+        self.ui_list = []
+        if hasattr(self, 'camera'):
+            del self.camera
+        if hasattr(self, 'lifebar'):
+            del self.lifebar
+        if hasattr(self, 'player'):
+            del self.player
 
     def pause(self):
         self._pause = True
@@ -139,25 +164,52 @@ class Game:
     def resume(self):
         self._pause = False
 
+    def character_death(self):
+        if self.lives > 0:
+            self.lives += -1
+            self.player.refresh()
+            self.level.refresh()
+            self.reload_level()
+        else:
+            self.clear
+            self.load_menu
+
+    def change_level(self):
+        change = False
+        hits_list = pygame.sprite.spritecollide(self.player, self.door_sprite_list, False)
+        for hit in hits_list:
+            self.current_level = [hit.level, hit.px, hit.py, hit.dir]
+            change = True
+        return change
+
+    def check_dead(self):
+        return False
+        
     #Pygame functions
         
     def update(self):
-        #print(len(self.active_sprite_list)) //Used to check number of objects floating around.
-        if not (self._pause):
+        if not (self._pause) and hasattr(self, 'player'):
             self.player_sprite_list.update(self.monster_sprite_list.sprites(),
                                            self.platform_sprite_list,
                                            self.ladder_sprite_list)
             self.monster_sprite_list.update(self.bullet_sprite_list.sprites())
             self.bullet_sprite_list.update()
+            if self.change_level():
+                self.load_level(self.current_level)
+            if self.check_dead():
+                self.character_death()
         if hasattr(self, 'camera'):
             self.camera.update(self.player)
         if hasattr(self, 'lifebar'):
             self.lifebar.update(self.player)
+        
 
     def draw(self, screen):
         #Only draw whats actually on camera
         for ladder in self.ladder_sprite_list:
             screen.blit(ladder.image, self.camera.apply(ladder))
+        for door in self.door_sprite_list:
+            screen.blit(door.image, self.camera.apply(door))
         for platform in self.platform_sprite_list:
             screen.blit(platform.image, self.camera.apply(platform))
         for monster in self.monster_sprite_list:
@@ -213,16 +265,16 @@ class Game:
                     self.exit_game()
             if event.key == K_LEFT:
                 if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list)
+                    self.player.stop(self.ladder_sprite_list, 'left')
             if event.key == K_RIGHT:
                 if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list)
+                    self.player.stop(self.ladder_sprite_list, 'right')
             if event.key == K_UP:
                 if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list)
+                    self.player.stop(self.ladder_sprite_list, 'up')
             if event.key == K_DOWN:
                 if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list)
+                    self.player.stop(self.ladder_sprite_list, 'down')
             if event.key == ord('x'):
                 pass
             if event.key == ord('z'):
@@ -233,3 +285,6 @@ class Game:
                     self.resume()
                 else:
                     self.pause()
+            if event.key == ord('r'):
+                self.game_menu.load_json()
+                self.load_level(self.current_level)

@@ -1,0 +1,104 @@
+{
+	"name": "Mario Boss",
+	"dimensions": {
+		"width": 21,
+		"height": 20
+	},
+	"file": ["sprites/Mario_Tiles_01.png"],
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"background_fill": {
+		"red": 0,
+		"green": 0,
+		"blue": 0
+	},
+	"player_start":{ 
+		"x": 50,
+		"y": 680
+	},
+	"menu_tile": "sprites/Mario_1_1.png",
+	"sprites": [{
+		"name": "brick",
+		"x": 0,
+		"y": 51,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "b_brick",
+		"x": 50,
+		"y": 51,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "door",
+		"x": 350,
+		"y": 0,
+		"w": 50,
+		"h": 50
+	}],
+	"scenery":[],
+	"ladders":[],
+	"doors":[],
+	"spawners":{},
+	"platforms": [{
+		"tile": "brick",
+		"x": 0,
+		"y": 19,
+		"w": 21,
+		"h": 2
+	},
+	{
+		"tile": "brick",
+		"x": -1,
+		"y": 0,
+		"w": 1,
+		"h": 20
+	},
+	{
+		"tile": "brick",
+		"x": 22,
+		"y": 0,
+		"w": 1,
+		"h": 20
+	},
+	{
+		"tile": "b_brick",
+		"x": 0,
+		"y": 0,
+		"w": 1,
+		"h": 12
+	},
+	{
+		"tile": "b_brick",
+		"x": 0,
+		"y": 15,
+		"w": 1,
+		"h": 4
+	},
+	{
+		"tile": "b_brick",
+		"x": 20,
+		"y": 0,
+		"w": 1,
+		"h": 19
+	},
+	{
+		"tile": "b_brick",
+		"x": 0,
+		"y": 0,
+		"w": 21,
+		"h": 9
+	},
+	{
+		"tile": "door",
+		"x": 0,
+		"y": 12,
+		"w": 1,
+		"h": 3
+	}]
+}

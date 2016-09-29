@@ -129,17 +129,18 @@ class Player(Pawn):
         else:
             self._climbing = False
 
-    def stop(self, ladders):
+    def stop(self, ladders, direction):
         """ Called when the user lets off the keyboard. """
-        self.walk = False
+        if direction == 'right' or direction== 'left':
+            self.walk = False
+            self._change_x = 0
         self.cycle_frame = 0
-        self._change_x = 0
         if self._climbing and self.ladder_check(ladders):
             self._change_y = 0
         else:
             self._change_y = 12
+            self._climbing = False
             self._falling = True
-        self._shooting = False
 
     def ladder_check(self, ladders):
         for ladder in ladders:

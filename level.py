@@ -5,13 +5,28 @@ from sprite import SpriteSheet
 class Platform(pygame.sprite.Sprite):
     def __init__(self, tile, width, height):
         pygame.sprite.Sprite.__init__(self)
-        self.image = Surface((47*width, 47*height)).convert()
+        self.image = Surface((50*width, 50*height)).convert()
         self.image.fill((240,123,255))
         self.image.set_colorkey((240,123,255))
         for y in range(height):
             for x in range(width):
-                self.image.blit(tile, (x*47, y*47))
+                self.image.blit(tile, (x*50, y*50))
         self.rect = self.image.get_rect()
+        
+class Door(pygame.sprite.Sprite):
+    def __init__(self, tile):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = Surface((50, 50*4)).convert()
+        self.image.fill((240,123,255))
+        self.image.set_colorkey((240,123,255))
+        for y in range(4):
+            for x in range(1):
+                self.image.blit(tile, (x*50, y*50))
+        self.rect = self.image.get_rect()
+        self.level = ''
+        self.px = 0
+        self.py = 0
+        self.dir = "R"
         
 class Scenery(pygame.sprite.Sprite):
     def __init__(self, tile, width, height):
@@ -53,7 +68,8 @@ class Level:
         self.sprite_files = []
         self.platforms = []
         self.ladders = []
-        self.blocksize = 47
+        self.doors = []
+        self.blocksize = 50
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
         self.load_tile_set(tiles, sprite_sheet)
@@ -86,12 +102,14 @@ class Level:
             self.platforms.append(platform)
         for ladder in data['ladders']:
             self.ladders.append(ladder)
+        for door in data['doors']:
+            self.doors.append(door)
         for scenery in data['scenery']:
             self.scenery.append(scenery)
         self.width = int(data['dimensions']['width']) * self.blocksize
         self.height = int(data['dimensions']['height']) * self.blocksize
-        self.player_x = int(data['player_start']['x']) * self.blocksize
-        self.player_y = int(data['player_start']['y']) * self.blocksize
+        self.player_x = int(data['player_start']['x'])
+        self.player_y = int(data['player_start']['y'])
         self.backdrop = (int(data['background_fill']['red']),
                         int(data['background_fill']['green']),
                         int(data['background_fill']['blue']))
@@ -129,3 +147,20 @@ class Level:
             bgobject.rect.y = int(s['y'])* self.blocksize
             s_list.append(bgobject)
         return s_list
+
+    def build_doors(self):
+        d_list = []
+        for d in self.doors:
+            door = Door(self._object_list[d['tile']])
+            door.rect.x = int(d['x'])* self.blocksize
+            door.rect.y = int(d['y'])* self.blocksize
+            door.level = d['level']
+            door.px = d['player_x']
+            door.py = d['player_y']
+            door.dir = d['player_f']
+            d_list.append(door)
+        return d_list
+            
+    def load_door(self, x, y):
+        self.player_x = x
+        self.player_y = y
