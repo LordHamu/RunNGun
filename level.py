@@ -1,17 +1,24 @@
 import pygame, json
 from pygame import *
 from sprite import SpriteSheet
+from spawner import Spawner
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, tile, width, height):
+    def __init__(self, tile, width, height, cx = 0, cy = 0):
         pygame.sprite.Sprite.__init__(self)
-        self.image = Surface((50*width, 50*height)).convert()
+        self.cx = cx
+        self.cy = cy
+        self.image = Surface((width*50, height*50)).convert()
         self.image.fill((240,123,255))
         self.image.set_colorkey((240,123,255))
         for y in range(height):
             for x in range(width):
                 self.image.blit(tile, (x*50, y*50))
         self.rect = self.image.get_rect()
+
+    def update(self, sprite_list):
+        self.rect.x += self.cx
+        self.rect.y += self.cy
         
 class Door(pygame.sprite.Sprite):
     def __init__(self, tile):
@@ -69,6 +76,7 @@ class Level:
         self.platforms = []
         self.ladders = []
         self.doors = []
+        self.spawners = []
         self.blocksize = 50
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
@@ -106,10 +114,12 @@ class Level:
             self.doors.append(door)
         for scenery in data['scenery']:
             self.scenery.append(scenery)
+        for spawner in data['spawners']:
+            self.spawners.append(spawner)
         self.width = int(data['dimensions']['width']) * self.blocksize
         self.height = int(data['dimensions']['height']) * self.blocksize
-        self.player_x = int(data['player_start']['x'])
-        self.player_y = int(data['player_start']['y'])
+        self.player_x = int(data['player_start']['x']) * self.blocksize
+        self.player_y = int(data['player_start']['y']) * self.blocksize
         self.backdrop = (int(data['background_fill']['red']),
                         int(data['background_fill']['green']),
                         int(data['background_fill']['blue']))
@@ -130,8 +140,8 @@ class Level:
         l_list = []
         for l in self.ladders:
             ladder = Platform(self._object_list[l['tile']],
-                                l['w'],
-                                l['h'])
+                                int(l['w']),
+                                int(l['h']))
             ladder.rect.x = int(l['x'])* self.blocksize
             ladder.rect.y = int(l['y'])* self.blocksize
             l_list.append(ladder)
@@ -141,8 +151,8 @@ class Level:
         s_list = []
         for s in self.ladders:
             bgobject = Scenery(self._object_list[s['tile']],
-                                s['w'],
-                                s['h'])
+                                int(s['w']),
+                                int(s['h']))
             bgobject.rect.x = int(s['x'])* self.blocksize
             bgobject.rect.y = int(s['y'])* self.blocksize
             s_list.append(bgobject)
@@ -160,6 +170,13 @@ class Level:
             door.dir = d['player_f']
             d_list.append(door)
         return d_list
+
+    def build_spawners(self):
+        s_list = []
+        for spawn in self.spawners:
+            spawner = Spawner(spawn)
+            s_list.append(spawner)
+        return s_list
             
     def load_door(self, x, y):
         self.player_x = x

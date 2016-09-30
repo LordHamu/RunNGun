@@ -21,7 +21,7 @@ class Player(Pawn):
         self.rect = pygame.Rect((self.char_x/3, self.char_y/4),
                                 ((self.char_x*2/3), self.char_y))
     
-    def update(self, monsters, platform, ladder):
+    def update(self, monsters, platform, m_platform):
         hits_list = pygame.sprite.spritecollide(self, monsters, False)
         for hit in hits_list:
             if self._invuln:
@@ -41,8 +41,12 @@ class Player(Pawn):
             self._change_y += 2
             if self._change_y > 30: self._change_y = 30
         self.rect.x += self._change_x
+        if not(self._climbing):
+            self._falling = True
+        self.colide(self._change_x, 0, m_platform)
         self.colide(self._change_x, 0, platform)
         self.rect.y += self._change_y
+        self.colide(0, self._change_y, m_platform)
         self.colide(0, self._change_y, platform)
 
     def draw(self):
@@ -160,8 +164,6 @@ class Player(Pawn):
         return True
 
     def colide(self, x, y, platform_list):
-        if not(self._climbing):
-            self._falling = True
         for platform in platform_list:
             if pygame.sprite.collide_rect(self, platform):
                 #print(self.rect, platform.rect)

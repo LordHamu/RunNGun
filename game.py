@@ -5,20 +5,23 @@ Description: This contains all the game logic, I seperated it from the pygame
 runner so that main stays uncluttered.
 """
 
-import pygame, constants, sys, copy
+import pygame, constants, sys, copy, json
 from pygame.locals import *
 from player import Player
 from monster import Monster
 from camera import Camera
-from level import Platform, Bullet, Level
+from level import Level, Platform, Bullet
 from text import Text
 from menu import Menu
 from hpbar import Lifebar
+from pawn import Pawn
+from os import listdir
 
 class Game:
 
     def __init__(self):
         self._pause = False
+        self.character = "character\\megaman.json"
         self.backdrop = constants.BLACK
         self.monster_sprite_list = pygame.sprite.Group()
         self.scenery_sprite_list = pygame.sprite.Group()
@@ -27,6 +30,10 @@ class Game:
         self.platform_sprite_list = pygame.sprite.Group()
         self.ladder_sprite_list = pygame.sprite.Group()
         self.door_sprite_list = pygame.sprite.Group()
+        self.moving_platforms_list = pygame.sprite.Group()
+        self.spawners = []
+        self.object_list = {}
+        self.create_objects()
         self.ui_list = []
         self.load_menu()
 
@@ -52,7 +59,6 @@ class Game:
 
     def load_level(self, level):
         self.clear()
-        print(level)
         self.level = Level(self.game_menu.get_level_json(level[0]))
         if level[1] != 0:
             self.level.player_x = level[1]
@@ -62,8 +68,9 @@ class Game:
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
         self.door_sprite_list = self.level.build_doors()
+        self.spawners = self.level.build_spawners()
         self.backdrop = self.level.backdrop
-        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y, level[3])
+        self.add_player(self.character, self.level.player_x, self.level.player_y, level[3])
         self.add_camera()
         self.add_lifebar(25, 25, self.player.get_max_life())
 
@@ -73,7 +80,7 @@ class Game:
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
         self.backdrop = self.level.backdrop
-        self.add_player("json\\megaman.json", self.level.player_x, self.level.player_y, "R")
+        self.add_player(self.character, self.level.player_x, self.level.player_y, "R")
         self.add_camera()
         self.add_lifebar(25, 25, self.player.get_max_life())
 
@@ -123,14 +130,13 @@ class Game:
         self.bullet_sprite_list.add(bullet)
         return True
 
-    def add_object(self, obj_name, x, y):
-        obj = self._bg_object.get_object(obj_name)
-        if not(obj):
-            print("could not find key pair:" + obj_name)
-        else:
-            obj.rect.x = x
-            obj.rect.y = y
-            self.level_sprite_list.add(obj)
+    def add_platform(self, pawn_file, cord, move):
+        pawn = Pawn(pawn_file)
+        pawn.rect.x = cord[0]
+        pawn.rect.y = cord[1]
+        pawn.set_movement(move[0], move[1])
+        self.moving_platforms_list.add(pawn)
+        return True
         
     def add_player(self, json, x, y, d):
         self.player = Player(json)
@@ -140,6 +146,16 @@ class Game:
         self.player_sprite_list.add(self.player)
     
     #Helper functions
+        
+    def create_objects(self):
+        files = listdir("objects")
+        for file in files:
+            with open("objects\\"+file) as data_file:
+                data = json.load(data_file)
+                if data['name'] in self.object_list:
+                    print("crap, names matched.")
+                else:
+                    self.object_list[data['name']] = "objects\\"+file
 
     def clear(self):
         self.backdrop = constants.BLACK
@@ -150,6 +166,7 @@ class Game:
         self.platform_sprite_list = pygame.sprite.Group()
         self.ladder_sprite_list = pygame.sprite.Group()
         self.door_sprite_list = pygame.sprite.Group()
+        self.spawners = []
         self.ui_list = []
         if hasattr(self, 'camera'):
             del self.camera
@@ -189,9 +206,10 @@ class Game:
         
     def update(self):
         if not (self._pause) and hasattr(self, 'player'):
+            self.moving_platforms_list.update(self.player_sprite_list)
             self.player_sprite_list.update(self.monster_sprite_list.sprites(),
                                            self.platform_sprite_list,
-                                           self.ladder_sprite_list)
+                                           self.moving_platforms_list)
             self.monster_sprite_list.update(self.bullet_sprite_list.sprites())
             self.bullet_sprite_list.update()
             if self.change_level():
@@ -202,8 +220,19 @@ class Game:
             self.camera.update(self.player)
         if hasattr(self, 'lifebar'):
             self.lifebar.update(self.player)
+        for spawner in self.spawners:
+            spawn = spawner.update()
+            if spawn == False:
+                pass
+            elif spawn[0] == "Platform":
+                pawn_type = self.object_list[spawn[1]]
+                self.add_platform(pawn_type,
+                                  spawn[2],
+                                  spawn[3])
+            else:
+                pass
         
-
+        
     def draw(self, screen):
         #Only draw whats actually on camera
         for ladder in self.ladder_sprite_list:
@@ -218,6 +247,8 @@ class Game:
             screen.blit(bullet.image, self.camera.apply(bullet))
         for player in self.player_sprite_list:
             screen.blit(player.draw(), self.camera.apply(player))
+        for m_platform in self.moving_platforms_list:
+            screen.blit(m_platform.draw(), self.camera.apply(m_platform))
         #all ways draw the UI
         for ui in self.ui_list:
             if ui['type'] == 'button':

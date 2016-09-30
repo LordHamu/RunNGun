@@ -1,6 +1,7 @@
 {
 	"name": "Megaman",
-	"type": "Animated",
+	"type": "Character",
+	"animated": "True",
 	"file": ["sprites/Megaman.png"],
 	"rect": {
 		"width": 70,

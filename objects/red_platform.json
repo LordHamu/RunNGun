@@ -1,0 +1,24 @@
+{
+	"name": "Red_Platform",
+	"type": "Platform",
+	"animated": "False",
+	"file": ["sprites/obj.png"],
+	"frames": 1,
+	"rect": {
+		"width": 100,
+		"height": 20
+	},
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"sprites": [{
+		"name": "base",
+		"x": 0,
+		"y": 0,
+		"w": 100,
+		"h": 20
+	}],
+	"cycles": []
+}

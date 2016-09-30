@@ -33,16 +33,25 @@ class Pawn(pygame.sprite.Sprite):
         self.rect = self.static_image.get_rect()
 
     def update(self, sprite_list):
-        return true
+        self.rect.x += self._change_x
+        self.rect.y += self._change_y
+        return True
 
     def activate(self):
-        return true
+        return True
+
+    def draw(self):
+        return self.static_image
+
+    def set_movement(self, x, y):
+        self._change_x = x
+        self._change_y = y
 
     def parse_json(self, build_json):
         file_json = []
         with open(build_json) as data_file:
             data = json.load(data_file)
-            if data['type'] == "Animated":
+            if data['animated'] == "True":
                 self.animated = True
             for file in data['file']:
                 self.sprite_files.append(file)
@@ -72,4 +81,5 @@ class Pawn(pygame.sprite.Sprite):
             sprite_list[sprite['name']] = image
             if sprite['name'] == 'base':
                 self.static_image = image
+                self.image = image
         return sprite_list

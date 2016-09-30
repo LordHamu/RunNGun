@@ -1,6 +1,7 @@
 {
 	"name": "Lantern",
-	"type": "Animated",
+	"type": "Monster",
+	"animated": "True",
 	"file": ["sprites/enemies.png"],
 	"rect": {
 		"width": 30,
