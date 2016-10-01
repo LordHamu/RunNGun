@@ -1,5 +1,6 @@
 {
 	"name": "Mario 1-2",
+	"starter": "False",
 	"dimensions": {
 		"width": 200,
 		"height": 20
@@ -150,6 +151,7 @@
 		"limit": -1,
 		"freq": 210
 	}],
+	"monsters":[],
 	"platforms": [{
 		"tile": "brick",
 		"x": 0,

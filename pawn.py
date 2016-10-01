@@ -8,7 +8,7 @@ from sprite import SpriteSheet
 
 class Pawn(pygame.sprite.Sprite):
 
-    def __init__(self, build_json):
+    def __init__(self, build_json, level):
         """ Constructor function """
 
         # Call the parent's constructor
@@ -32,9 +32,20 @@ class Pawn(pygame.sprite.Sprite):
         # Set a referance to the image rect.
         self.rect = self.static_image.get_rect()
 
+        # Setup level kill zones.
+        self._right_catch = pygame.Rect(level.width+55, -10, 50, level.height+20)
+        self._left_catch = pygame.Rect(-55, -10, 50, level.height+20)
+        self._bottom_catch = pygame.Rect(-10, level.height+10, level.width+20, 50) 
+
     def update(self, sprite_list):
         self.rect.x += self._change_x
         self.rect.y += self._change_y
+        if self._right_catch.contains(self.rect):
+            self.kill()
+        if self._left_catch.contains(self.rect):
+            self.kill()
+        if self._bottom_catch.contains(self.rect):
+            self.kill()
         return True
 
     def activate(self):

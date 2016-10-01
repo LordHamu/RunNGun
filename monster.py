@@ -4,26 +4,47 @@ from pawn import Pawn
 
 class Monster(Pawn):
 
-    def __init__(self, build_json, move_cycle, track_size):
+    def __init__(self, build_json, level, move_cycle, track_size, flying = False):
         self._monster_hp = 100
         self._monster_damage = 10
         self._monster_track = 0
+        self._falling = True
+        self._flying = flying
         self._monster_direction = "L"
         self._monster_cycle = move_cycle
         self._track_size = track_size
-        Pawn.__init__(self, build_json)
-        self._right_catch = pygame.Rect(constants.DWIDTH+50, -10, 50, constants.DHEIGHT+20)
-        self._left_catch = pygame.Rect(-100, -10, 50, constants.DHEIGHT+20)
+        Pawn.__init__(self, build_json, level)
+        self._right_catch = pygame.Rect(constants.DWIDTH+55, -10, 50, constants.DHEIGHT+20)
+        self._left_catch = pygame.Rect(-55, -10, 50, constants.DHEIGHT+20)
+        self._bottom_catch = pygame.Rect(-10, constants.DHEIGHT+10, constants.DWIDTH+20, 50) 
         
-    def update(self, sprite_list):
+    def update(self, m_platform, platform, bullets):
+        hits_list = pygame.sprite.spritecollide(self, bullets, False)
+        for hit in hits_list:
+            self.take_damage(int(hit.deal_damage()))
+            hit.kill()
         self.ai()
         self.rect.x += self._change_x
         self.rect.y += self._change_y
+        if not(self._flying):
+            self._change_y += 2
+            if self._change_y > 30:
+                self._change_y = 30
+        self.colide(self._change_x, 0, m_platform)
+        self.colide(self._change_x, 0, platform)
+        self.rect.y += self._change_y
+        self.colide(0, self._change_y, m_platform)
+        self.colide(0, self._change_y, platform)
         if self._right_catch.contains(self.rect):
             self.kill()
         if self._left_catch.contains(self.rect):
             self.kill()
-        self.image = self.sprite_list['center'].copy()
+        if self._bottom_catch.contains(self.rect):
+            self.kill()
+        self.image = self.sprite_list['base'].copy()
+
+    def draw(self):
+        return self.image
         
     def ai(self):
         if self._monster_track == self._track_size:
@@ -37,35 +58,57 @@ class Monster(Pawn):
                 "U": self.go_up,
                 "L": self.go_left,
                 "R": self.go_right}
+        print(self._monster_direction)
         move[self._monster_direction]()
         
-
+    def flip(self):
+        flip_cycle = [l.replace("L", "P") for l in self._monster_cycle.copy()]
+        flip_cycle = [l.replace("R", "L") for l in flip_cycle]
+        flip_cycle = [l.replace("P", "R") for l in flip_cycle]
+        self._monster_cycle = flip_cycle
+        
     def go_left(self):
-        self._change_x = -6
+        self._change_x = -2
         self._monster_track += 1
-        self.walk = True
 
     def go_right(self):
         """ Called when the user hits the right arrow. """
-        self._change_x = 6
+        self._change_x = 2
         self._monster_track += 1
-        self.walk = True
 
     def go_up(self):
         self._change_y = -12
         self._monster_track += 1
-        self.walk = True
 
     def go_down(self):
         self._change_y = 12
         self._monster_track += 1
-        self.walk = True
 
     def take_damage(self, dam):
         self._monster_hp = self._monster_hp - dam
         if self._monster_hp < 0 :
             self._monster_hp = 0
         return self.monster_death()
+
+    def colide(self, x, y, platform_list):
+        for platform in platform_list:
+            if pygame.sprite.collide_rect(self, platform):
+                if x > 0:
+                    self.rect.right = platform.rect.left - 2
+                    self.flip()
+                if x < 0 :
+                    self.rect.left = platform.rect.right + 2
+                    self.flip()
+                if not(self._flying):
+                    if y > 0:
+                        self.rect.bottom = platform.rect.top - 1
+                        self._falling = False
+                        self._change_y = 0
+                    elif y < 0:
+                        self.rect.top = platform.rect.bottom + 1
+                        self._change_y = 0
+
+
 
     def deal_damage(self):
         return self._monster_damage

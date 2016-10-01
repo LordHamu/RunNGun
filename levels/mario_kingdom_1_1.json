@@ -1,5 +1,6 @@
 {
 	"name": "Mario 1-1",
+	"starter": "True",
 	"dimensions": {
 		"width": 215,
 		"height": 20
@@ -108,7 +109,32 @@
 		"player_y": 880,
 		"player_f": "R"
 	}],
-	"spawners":{},
+	"spawners":[],
+	"monsters":[{
+	"type": "henchman",
+	"file": "enemies/goomba.json",
+	"location":{"x": 25,"y": 18},
+	"path": ["L"],
+	"track": 1
+	},{
+	"type": "henchman",
+	"file": "enemies/goomba.json",
+	"location":{"x": 43,"y": 18},
+	"path": ["L"],
+	"track": 1
+	},{
+	"type": "henchman",
+	"file": "enemies/goomba.json",
+	"location":{"x": 54,"y": 18},
+	"path": ["L"],
+	"track": 1
+	},{
+	"type": "henchman",
+	"file": "enemies/goomba.json",
+	"location":{"x": 56,"y": 18},
+	"path": ["L"],
+	"track": 1
+	}],
 	"platforms": [{
 		"tile": "brick",
 		"x": 0,

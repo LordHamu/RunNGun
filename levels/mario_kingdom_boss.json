@@ -1,5 +1,6 @@
 {
 	"name": "Mario Boss",
+	"starter": "False",
 	"dimensions": {
 		"width": 21,
 		"height": 20
@@ -44,7 +45,8 @@
 	"scenery":[],
 	"ladders":[],
 	"doors":[],
-	"spawners":{},
+	"spawners":[],
+	"monsters":[],
 	"platforms": [{
 		"tile": "brick",
 		"x": 0,

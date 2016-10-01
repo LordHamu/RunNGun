@@ -4,11 +4,12 @@ from pawn import Pawn
 
 class Player(Pawn):
     
-    def __init__(self, build_json):
+    def __init__(self, build_json, level):
         self.direction = 'R'
+        self.weapon_damage = 25
         self._player_max_hp = 100
         self._player_hp = 100
-        self._invuln_timer = 300
+        self._invuln_timer = 90
         self._shooting_timer = 30
         self.cycle_frame = 0
         self.climb_frame = 0
@@ -17,7 +18,7 @@ class Player(Pawn):
         self._climbing = False
         self._invuln = False
         self._blink = True    
-        Pawn.__init__(self, build_json)
+        Pawn.__init__(self, build_json, level)
         self.rect = pygame.Rect((self.char_x/3, self.char_y/4),
                                 ((self.char_x*2/3), self.char_y))
     
@@ -36,7 +37,7 @@ class Player(Pawn):
         if self._invuln_timer < 0:
             self._invuln = False
             self._blink = True
-            self._invuln_timer = 300
+            self._invuln_timer = 90
         if not(self._climbing):
             self._change_y += 2
             if self._change_y > 30: self._change_y = 30
@@ -166,7 +167,6 @@ class Player(Pawn):
     def colide(self, x, y, platform_list):
         for platform in platform_list:
             if pygame.sprite.collide_rect(self, platform):
-                #print(self.rect, platform.rect)
                 if x > 0:
                     self.rect.right = platform.rect.left - 1
                 if x < 0 :

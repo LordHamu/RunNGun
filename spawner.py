@@ -8,9 +8,14 @@ class Spawner:
         self.y = json['y']*50
         self.speed_x = json['speed']['x']
         self.speed_y = json['speed']['y']
+        if "path" in json:
+            self.path = json['path']
+            self.path_speed = json['speed']['path']
         self.limit = int(json['limit'])
         if self.limit < 0:
             self.unlimited = True
+        else:
+            self.unlimited = False
         self.frequency = int(json['freq'])
         self.tick = 0
         self.spawn = 0

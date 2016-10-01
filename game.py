@@ -8,7 +8,6 @@ runner so that main stays uncluttered.
 import pygame, constants, sys, copy, json
 from pygame.locals import *
 from player import Player
-from monster import Monster
 from camera import Camera
 from level import Level, Platform, Bullet
 from text import Text
@@ -50,7 +49,7 @@ class Game:
         self.clear()
         self.lives = 3
         self.game_menu = Menu()
-        self.current_level = ['Mario 1-3', 0, 0, "R"]
+        self.current_level = ['Mario 1-1', 0, 0, "R"]
         self.load_level(self.current_level)
         
     def exit_game(self):
@@ -68,6 +67,7 @@ class Game:
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
         self.door_sprite_list = self.level.build_doors()
+        self.monster_sprite_list = self.level.build_monsters()
         self.spawners = self.level.build_spawners()
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, level[3])
@@ -106,19 +106,8 @@ class Game:
         textRect.center = ( (x+(w/2)), (y+(h/2)) )
         self.ui_list.append({'title':button_text,'type':'button_text','surface':textSurf, 'rectangle':textRect})
 
-    def add_monster(self, file, x, y):
-        monster = Monster(file, ['U','L','D'], 10)
-        monster.rect.x = x
-        monster.rect.y = y
-        if self.monster_sprite_list.has(monster):
-            print("Dupe Monster added.")
-            return False
-        else:
-            self.monster_sprite_list.add(copy.copy(monster))
-        return True
-
     def add_bullet(self, cord):
-        bullet = Bullet(self.level.rect)
+        bullet = Bullet(self.level.rect, self.player.weapon_damage)
         if cord[0] == 'R':
             bullet.rect.x = cord[1] + 45
             bullet.rect.y = cord[2] + 40
@@ -131,7 +120,7 @@ class Game:
         return True
 
     def add_platform(self, pawn_file, cord, move):
-        pawn = Pawn(pawn_file)
+        pawn = Pawn(pawn_file, self.level)
         pawn.rect.x = cord[0]
         pawn.rect.y = cord[1]
         pawn.set_movement(move[0], move[1])
@@ -139,7 +128,7 @@ class Game:
         return True
         
     def add_player(self, json, x, y, d):
-        self.player = Player(json)
+        self.player = Player(json, self.level)
         self.player.rect.x = x
         self.player.rect.y = y
         self.player.direction = d
@@ -210,7 +199,9 @@ class Game:
             self.player_sprite_list.update(self.monster_sprite_list.sprites(),
                                            self.platform_sprite_list,
                                            self.moving_platforms_list)
-            self.monster_sprite_list.update(self.bullet_sprite_list.sprites())
+            self.monster_sprite_list.update(self.platform_sprite_list,
+                                            self.moving_platforms_list,
+                                            self.bullet_sprite_list.sprites())
             self.bullet_sprite_list.update()
             if self.change_level():
                 self.load_level(self.current_level)
@@ -226,9 +217,7 @@ class Game:
                 pass
             elif spawn[0] == "Platform":
                 pawn_type = self.object_list[spawn[1]]
-                self.add_platform(pawn_type,
-                                  spawn[2],
-                                  spawn[3])
+                self.add_platform(pawn_type, spawn[2], spawn[3])
             else:
                 pass
         

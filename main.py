@@ -1,7 +1,7 @@
 """
 Basic Shooter
 Author: Clayton Headley
-Description: I'm trying to create a basic LARPG setup using my understanding
+Description: I'm trying to create a basic shooter setup using my understanding
 gained from gaming over many years.
 """
 

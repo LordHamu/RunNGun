@@ -2,6 +2,7 @@ import pygame, json
 from pygame import *
 from sprite import SpriteSheet
 from spawner import Spawner
+from monster import Monster
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, tile, width, height, cx = 0, cy = 0):
@@ -45,12 +46,13 @@ class Scenery(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, level):
+    def __init__(self, level, damage):
         import constants
         pygame.sprite.Sprite.__init__(self)
         image = pygame.Surface([15, 10]).convert()
         pygame.draw.ellipse(image, constants.WHITE,((0,0),(15,10)))
         self.image = image
+        self.damage = damage
         self.rect = image.get_rect()
         self._change_x = 0
         self._change_y = 0
@@ -68,6 +70,10 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
         if self._left_catch.contains(self.rect):
             self.kill()
+
+    def deal_damage(self):
+        return self.damage
+    
         
 class Level:
     def __init__(self, level):
@@ -77,6 +83,7 @@ class Level:
         self.ladders = []
         self.doors = []
         self.spawners = []
+        self.monsters = []
         self.blocksize = 50
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
@@ -116,6 +123,8 @@ class Level:
             self.scenery.append(scenery)
         for spawner in data['spawners']:
             self.spawners.append(spawner)
+        for monster in data['monsters']:
+            self.monsters.append(monster)
         self.width = int(data['dimensions']['width']) * self.blocksize
         self.height = int(data['dimensions']['height']) * self.blocksize
         self.player_x = int(data['player_start']['x']) * self.blocksize
@@ -177,6 +186,16 @@ class Level:
             spawner = Spawner(spawn)
             s_list.append(spawner)
         return s_list
+
+    def build_monsters(self):
+        m_group = pygame.sprite.Group()
+        for monster in self.monsters:
+            mon = Monster(monster['file'], self, monster['path'], monster['track'], True)
+            mon.rect.x = int(monster['location']['x'])*50
+            mon.rect.y = int(monster['location']['y'])*50
+            mon.type = monster['type']
+            m_group.add(mon)
+        return m_group
             
     def load_door(self, x, y):
         self.player_x = x

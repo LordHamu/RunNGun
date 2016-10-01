@@ -1,0 +1,38 @@
+{
+	"name": "Goomba",
+	"type": "Monster",
+	"animated": "True",
+	"file": ["sprites/mario_enemies.png"],
+	"rect": {
+		"width": 45,
+		"height": 45
+	},
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"frames": 5,
+	"cycles": [{
+		"name": "walk",
+		"cycle": [
+		"base",
+		"right",
+		"base",
+		"right"
+		]
+	}],
+	"sprites": [{
+		"name": "base",
+		"x": 0,
+		"y": 0,
+		"w": 40,
+		"h": 45
+	},{
+		"name": "right",
+		"x": 42,
+		"y": 0,
+		"w": 40,
+		"h": 45
+	}]
+}
