@@ -75,7 +75,9 @@ class Game:
         self.add_lifebar(25, 25, self.player.get_max_life())
 
     def reload_level(self):
+        monsters = self.monster_sprite_list
         self.clear()
+        self.monster_sprite_list = monsters
         self.scenery_sprite_list = self.level.build_scenery()
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
@@ -173,12 +175,10 @@ class Game:
     def character_death(self):
         if self.lives > 0:
             self.lives += -1
-            self.player.refresh()
-            self.level.refresh()
             self.reload_level()
         else:
-            self.clear
-            self.load_menu
+            self.clear()
+            self.load_menu()
 
     def change_level(self):
         change = False
@@ -189,7 +189,7 @@ class Game:
         return change
 
     def check_dead(self):
-        return False
+        return self.player.player_death()
         
     #Pygame functions
         
@@ -201,7 +201,8 @@ class Game:
                                            self.moving_platforms_list)
             self.monster_sprite_list.update(self.platform_sprite_list,
                                             self.moving_platforms_list,
-                                            self.bullet_sprite_list.sprites())
+                                            self.bullet_sprite_list.sprites(),
+                                            self.monster_sprite_list.sprites())
             self.bullet_sprite_list.update()
             if self.change_level():
                 self.load_level(self.current_level)

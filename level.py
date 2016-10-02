@@ -190,7 +190,11 @@ class Level:
     def build_monsters(self):
         m_group = pygame.sprite.Group()
         for monster in self.monsters:
-            mon = Monster(monster['file'], self, monster['path'], monster['track'], True)
+            mon = Monster(monster['file'],
+                          self,
+                          monster['path'],
+                          monster['track'],
+                          bool(monster['flying']))
             mon.rect.x = int(monster['location']['x'])*50
             mon.rect.y = int(monster['location']['y'])*50
             mon.type = monster['type']

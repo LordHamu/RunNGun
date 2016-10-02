@@ -21,8 +21,11 @@ class Player(Pawn):
         Pawn.__init__(self, build_json, level)
         self.rect = pygame.Rect((self.char_x/3, self.char_y/4),
                                 ((self.char_x*2/3), self.char_y))
+        self._bottom_catch = pygame.Rect(-10, level.height+10, level.width+20, 500) 
     
     def update(self, monsters, platform, m_platform):
+        if self._bottom_catch.contains(self.rect):
+            self.take_damage(self._player_max_hp)
         hits_list = pygame.sprite.spritecollide(self, monsters, False)
         for hit in hits_list:
             if self._invuln:
@@ -39,7 +42,7 @@ class Player(Pawn):
             self._blink = True
             self._invuln_timer = 90
         if not(self._climbing):
-            self._change_y += 2
+            self._change_y += 5
             if self._change_y > 30: self._change_y = 30
         self.rect.x += self._change_x
         if not(self._climbing):
@@ -112,7 +115,7 @@ class Player(Pawn):
     def jump(self):
         self._climbing = False
         if not self._falling:
-            self._change_y = -30
+            self._change_y = -60
             self._falling = True
         self.cycle_frame = 0
 

@@ -115,25 +115,29 @@
 	"file": "enemies/goomba.json",
 	"location":{"x": 25,"y": 18},
 	"path": ["L"],
-	"track": 1
+	"track": 1,
+	"flying": "False"
 	},{
 	"type": "henchman",
 	"file": "enemies/goomba.json",
 	"location":{"x": 43,"y": 18},
-	"path": ["L"],
-	"track": 1
+	"path": ["L", "L", "L"],
+	"track": 1,
+	"flying": "False"
 	},{
 	"type": "henchman",
 	"file": "enemies/goomba.json",
 	"location":{"x": 54,"y": 18},
-	"path": ["L"],
-	"track": 1
+	"path": ["L", "L", "L"],
+	"track": 1,
+	"flying": "False"
 	},{
 	"type": "henchman",
 	"file": "enemies/goomba.json",
 	"location":{"x": 56,"y": 18},
-	"path": ["L"],
-	"track": 1
+	"path": ["L", "L" ,"L"],
+	"track": 1,
+	"flying": "False"
 	}],
 	"platforms": [{
 		"tile": "brick",

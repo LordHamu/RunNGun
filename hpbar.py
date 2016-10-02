@@ -24,7 +24,7 @@ class Lifebar:
                                                 self._red_bar[2]+5,
                                                 self._red_bar[3]+5])
         pygame.draw.rect(hpbar, constants.GREEN, [5,
-                                                  5,
+                                                  self._green_bar[1]+5,
                                                   self._green_bar[2]+5,
                                                   self._green_bar[3]+5])
         image.blit(hpbar, [self._x, self._y])

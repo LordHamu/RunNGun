@@ -18,16 +18,20 @@ class Monster(Pawn):
         self._left_catch = pygame.Rect(-55, -10, 50, constants.DHEIGHT+20)
         self._bottom_catch = pygame.Rect(-10, constants.DHEIGHT+10, constants.DWIDTH+20, 50) 
         
-    def update(self, m_platform, platform, bullets):
+    def update(self, m_platform, platform, bullets, monsters):
         hits_list = pygame.sprite.spritecollide(self, bullets, False)
         for hit in hits_list:
             self.take_damage(int(hit.deal_damage()))
             hit.kill()
+        bump_list = pygame.sprite.spritecollide(self, monsters, False)
+        for bump in bump_list:
+            self.flip()
+            
         self.ai()
         self.rect.x += self._change_x
         self.rect.y += self._change_y
         if not(self._flying):
-            self._change_y += 2
+            self._change_y += 5
             if self._change_y > 30:
                 self._change_y = 30
         self.colide(self._change_x, 0, m_platform)
@@ -58,11 +62,10 @@ class Monster(Pawn):
                 "U": self.go_up,
                 "L": self.go_left,
                 "R": self.go_right}
-        print(self._monster_direction)
         move[self._monster_direction]()
         
     def flip(self):
-        flip_cycle = [l.replace("L", "P") for l in self._monster_cycle.copy()]
+        flip_cycle = [l.replace("L", "P") for l in self._monster_cycle]
         flip_cycle = [l.replace("R", "L") for l in flip_cycle]
         flip_cycle = [l.replace("P", "R") for l in flip_cycle]
         self._monster_cycle = flip_cycle
@@ -94,11 +97,11 @@ class Monster(Pawn):
         for platform in platform_list:
             if pygame.sprite.collide_rect(self, platform):
                 if x > 0:
-                    self.rect.right = platform.rect.left - 2
                     self.flip()
+                    self._chnage_x = -x
                 if x < 0 :
-                    self.rect.left = platform.rect.right + 2
                     self.flip()
+                    self._chnage_x = -x
                 if not(self._flying):
                     if y > 0:
                         self.rect.bottom = platform.rect.top - 1
