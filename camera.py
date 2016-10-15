@@ -3,13 +3,21 @@ from pygame import *
 
 class Camera(object):
     def __init__(self, width, height):
-        self.state = Rect(0, 0, width, height)
-
+        self.rect = Rect(0, 0, width, height)
+        
     def apply(self, target):
-        return target.rect.move(self.state.topleft)
+        return target.rect.move(self.rect.topleft)
 
     def update(self, target):
-        self.state = self.camera_func(self.state, target.rect)
+        self.rect = self.camera_func(self.rect, target.rect)
+
+    def on_camera(self, target):
+        import constants
+        on_cam = bool(Rect(0, 0, constants.DWIDTH, constants.DHEIGHT).colliderect(self.apply(target)))
+        if on_cam:
+            return True
+        else:
+            return False
 
     def camera_func(self, camera, target_rect):
         import constants

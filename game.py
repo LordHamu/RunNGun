@@ -81,6 +81,8 @@ class Game:
         self.scenery_sprite_list = self.level.build_scenery()
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
+        self.door_sprite_list = self.level.build_doors()
+        self.spawners = self.level.build_spawners()
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, "R")
         self.add_camera()
@@ -202,8 +204,9 @@ class Game:
             self.monster_sprite_list.update(self.platform_sprite_list,
                                             self.moving_platforms_list,
                                             self.bullet_sprite_list.sprites(),
-                                            self.monster_sprite_list.sprites())
-            self.bullet_sprite_list.update()
+                                            self.monster_sprite_list.sprites(),
+                                            self.camera)
+            self.bullet_sprite_list.update(self.platform_sprite_list)
             if self.change_level():
                 self.load_level(self.current_level)
             if self.check_dead():
@@ -232,7 +235,7 @@ class Game:
         for platform in self.platform_sprite_list:
             screen.blit(platform.image, self.camera.apply(platform))
         for monster in self.monster_sprite_list:
-            screen.blit(monster.image, self.camera.apply(monster))
+            screen.blit(monster.draw(), self.camera.apply(monster))
         for bullet in self.bullet_sprite_list:
             screen.blit(bullet.image, self.camera.apply(bullet))
         for player in self.player_sprite_list:

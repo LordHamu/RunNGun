@@ -63,7 +63,10 @@ class Bullet(pygame.sprite.Sprite):
         self._change_x = speed_x
         self._change_y = speed_y
         
-    def update(self):
+    def update(self, platform):
+        hits_list = pygame.sprite.spritecollide(self, platform, False)
+        for hit in hits_list:
+            self.kill()
         self.rect.x += self._change_x
         self.rect.y += self._change_y
         if self._right_catch.contains(self.rect):
@@ -190,15 +193,20 @@ class Level:
     def build_monsters(self):
         m_group = pygame.sprite.Group()
         for monster in self.monsters:
-            mon = Monster(monster['file'],
-                          self,
-                          monster['path'],
-                          monster['track'],
-                          bool(monster['flying']))
-            mon.rect.x = int(monster['location']['x'])*50
-            mon.rect.y = int(monster['location']['y'])*50
-            mon.type = monster['type']
-            m_group.add(mon)
+            for location in monster['location']:
+                if monster['flying']=='True':
+                    flying = True
+                else:
+                    flying = False
+                mon = Monster(monster['file'],
+                              self,
+                              monster['path'],
+                              monster['track'],
+                              flying)
+                mon.rect.x = int(location['x'])*50
+                mon.rect.y = int(location['y'])*50
+                mon.type = monster['type']
+                m_group.add(mon)
         return m_group
             
     def load_door(self, x, y):
