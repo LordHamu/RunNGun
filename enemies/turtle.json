@@ -1,0 +1,38 @@
+{
+	"name": "Koopa Troopa Green",
+	"type": "Monster",
+	"animated": "True",
+	"file": ["sprites/mario_enemies.png"],
+	"rect": {
+		"width": 45,
+		"height": 40
+	},
+	"bgcolor": {
+		"red": 240,
+		"green": 123,
+		"blue": 255
+	},
+	"frames": 5,
+	"cycles": [{
+		"name": "walk",
+		"cycle": [
+		"base",
+		"right",
+		"base",
+		"right"
+		]
+	}],
+	"sprites": [{
+		"name": "base",
+		"x": 85,
+		"y": 0,
+		"w": 45,
+		"h": 40
+	},{
+		"name": "right",
+		"x": 130,
+		"y": 0,
+		"w": 45,
+		"h": 40
+	}]
+}
