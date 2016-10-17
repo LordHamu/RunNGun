@@ -5,7 +5,7 @@
 	"file": ["sprites/mario_enemies.png"],
 	"rect": {
 		"width": 40,
-		"height": 45
+		"height": 40
 	},
 	"bgcolor": {
 		"red": 240,
@@ -27,12 +27,12 @@
 		"x": 0,
 		"y": 0,
 		"w": 40,
-		"h": 45
+		"h": 40
 	},{
 		"name": "right",
-		"x": 42,
+		"x": 40,
 		"y": 0,
 		"w": 40,
-		"h": 45
+		"h": 40
 	}]
 }

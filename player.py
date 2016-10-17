@@ -17,7 +17,9 @@ class Player(Pawn):
         self._shooting = False
         self._climbing = False
         self._invuln = False
-        self._blink = True    
+        self._blink = True
+        self._damage = False
+        self._damage_counter = 15
         Pawn.__init__(self, build_json, level)
         self.rect = pygame.Rect((self.char_x/3, self.char_y/4),
                                 ((self.char_x*2/3), self.char_y))
@@ -35,26 +37,45 @@ class Player(Pawn):
                 self.take_damage(int(damage))
                 self._invuln = True
 
+        if self._damage_counter > 0 and self._damage:
+            self._damage_counter += -1
+            if self.direction == "L" and not(self._climbing):
+                self._change_x = 3
+            if self.direction == "R" and not(self._climbing):
+                self._change_x = -3
+        elif self._damage:
+            self._damage = False
+            self._change_x = 0
+            
         if self._invuln:
             self._invuln_timer -= 1
         if self._invuln_timer < 0:
             self._invuln = False
             self._blink = True
             self._invuln_timer = 90
+
         if not(self._climbing):
             self._change_y += 5
             if self._change_y > 30: self._change_y = 30
+
         self.rect.x += self._change_x
+
         if not(self._climbing):
             self._falling = True
-        self.colide(self._change_x, 0, m_platform)
-        self.colide(self._change_x, 0, platform)
+        platform_set = pygame.sprite.Group()
+        for plat in platform:
+            platform_set.add(plat)
+        for plat in m_platform:
+            platform_set.add(plat)
+                
+        self.colide(self._change_x, 0, platform_set)
         self.rect.y += self._change_y
-        self.colide(0, self._change_y, m_platform)
-        self.colide(0, self._change_y, platform)
+        self.colide(0, self._change_y, platform_set)
 
     def draw(self):
-        if self._falling:
+        if self._damage and not(self._climbing):
+            image = self.sprite_list['damage'].copy()
+        elif self._falling:
             if self._shooting:
                 image = self.sprite_list['fallshoot'].copy()
             else:
@@ -189,6 +210,8 @@ class Player(Pawn):
         return self._player_max_hp
 
     def take_damage(self, dam):
+        self._damage = True
+        self._damage_counter = 15
         self._player_hp = self._player_hp - dam
         if self._player_hp < 0:
             self._player_hp = 0

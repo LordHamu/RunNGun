@@ -18,7 +18,7 @@
 	},
 	"player_start":{ 
 		"x": 50,
-		"y": 680
+		"y": 480
 	},
 	"menu_tile": "sprites/Mario_1_1.png",
 	"sprites": [{
@@ -41,12 +41,52 @@
 		"y": 0,
 		"w": 50,
 		"h": 50
+	},
+	{
+		"name": "teleport_top_left",
+		"x": 0,
+		"y": 200,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "teleport_top_right",
+		"x": 50,
+		"y": 200,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "teleport_bottom_left",
+		"x": 0,
+		"y": 250,
+		"w": 50,
+		"h": 50
+	},
+	{
+		"name": "teleport_bottom_right",
+		"x": 50,
+		"y": 250,
+		"w": 50,
+		"h": 50
 	}],
 	"scenery":[],
 	"ladders":[],
 	"doors":[],
 	"spawners":[],
-	"monsters":[],
+	"monsters":[{
+		"type": "boss",
+		"file": "enemies/king_koopa.json",
+		"location":[
+			{"x": 18,"y": 18}
+		],
+		"path": ["L","L"],
+		"track": 1,
+		"flying": "False",
+		"shooting": "True",
+		"s_speed": 90,
+		"hp": 500
+	}],
 	"platforms": [{
 		"tile": "brick",
 		"x": 0,

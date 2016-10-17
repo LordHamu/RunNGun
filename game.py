@@ -31,6 +31,8 @@ class Game:
         self.door_sprite_list = pygame.sprite.Group()
         self.moving_platforms_list = pygame.sprite.Group()
         self.spawners = []
+        self.ui_lifebar = []
+        self.object_lookup = {}
         self.object_list = {}
         self.create_objects()
         self.ui_list = []
@@ -72,10 +74,15 @@ class Game:
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, level[3])
         self.add_camera()
-        self.add_lifebar(25, 25, self.player.get_max_life())
+        self.add_lifebar(25, 25, 'player', self.player)
+        if self.level.boss:
+            self.boss = self.level.boss_mob
+            self.monster_sprite_list.add(self.boss)
+            self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss.get_max_life())
 
     def reload_level(self):
         monsters = self.monster_sprite_list
+        player_hp = self.player.get_life()
         self.clear()
         self.monster_sprite_list = monsters
         self.scenery_sprite_list = self.level.build_scenery()
@@ -86,15 +93,21 @@ class Game:
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, "R")
         self.add_camera()
-        self.add_lifebar(25, 25, self.player.get_max_life())
+        self.add_lifebar(25, 25, 'player', self.player)
+        if self.level.boss:
+            self.boss = self.level.boss_mob
+            self.object_lookup['boss'] = self.boss
+            self.monster_sprite_list.add(self.boss)
+            self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss)
 
     #Add functions
     def add_camera(self):
         self.camera = Camera(self.level.width, self.level.height)
 
-    def add_lifebar(self, x, y, hp):
-        self.lifebar = Lifebar( x, y, 20, 200, True)
-        self.lifebar.set_hp(hp)
+    def add_lifebar(self, x, y, name, pawn):
+        lifebar = Lifebar( x, y, 20, 200, True)
+        lifebar.set_hp(pawn.get_max_life())
+        self.ui_lifebar.append([name, lifebar])
         
     def add_title(self, title):
         TextSurf, TextRect = Text.text_objects(title, constants.largeText, constants.WHITE)
@@ -137,6 +150,7 @@ class Game:
         self.player.rect.y = y
         self.player.direction = d
         self.player_sprite_list.add(self.player)
+        self.object_lookup['player'] = self.player
     
     #Helper functions
         
@@ -163,10 +177,13 @@ class Game:
         self.ui_list = []
         if hasattr(self, 'camera'):
             del self.camera
-        if hasattr(self, 'lifebar'):
-            del self.lifebar
+        if hasattr(self, 'ui_lifebar'):
+            self.ui_lifebar = []
         if hasattr(self, 'player'):
             del self.player
+        if hasattr(self, 'boss'):
+            del self.boss
+            del self.boss_mob
 
     def pause(self):
         self._pause = True
@@ -213,8 +230,12 @@ class Game:
                 self.character_death()
         if hasattr(self, 'camera'):
             self.camera.update(self.player)
-        if hasattr(self, 'lifebar'):
-            self.lifebar.update(self.player)
+        if hasattr(self, 'ui_lifebar'):
+            for lifebar in self.ui_lifebar:
+                if lifebar[0] == "player":
+                    lifebar[1].update(self.player)
+                if lifebar[0] == 'boss':
+                    lifebar[1].update(self.boss)
         for spawner in self.spawners:
             spawn = spawner.update()
             if spawn == False:
@@ -256,8 +277,9 @@ class Game:
                     pygame.draw.rect(screen, ui['ic'],rect)
             else:
                 screen.blit(ui['surface'],ui['rectangle'])
-        if hasattr(self, 'lifebar'):
-            screen = self.lifebar.draw(screen)
+        if hasattr(self, 'ui_lifebar'):
+            for lifebar in self.ui_lifebar:
+                screen = lifebar[1].draw(screen)
         return screen
 
     # Giant Tree of Input parsing!

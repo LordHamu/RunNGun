@@ -88,6 +88,7 @@ class Level:
         self.spawners = []
         self.monsters = []
         self.blocksize = 50
+        self.boss = False
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
         self.load_tile_set(tiles, sprite_sheet)
@@ -136,7 +137,40 @@ class Level:
                         int(data['background_fill']['green']),
                         int(data['background_fill']['blue']))
         return file_json
-        
+    
+    def build_mob(self, monster, location):
+        if monster['flying']=='True':
+            flying = True
+        else:
+            flying = False
+        if 'shooting' in monster and monster['shooting'] == 'True':
+            shooting = True
+            s_speed = monster['s_speed']
+        else:
+            shooting = False
+            s_speed = 0
+        if 'hp' in monster:
+            hp = monster['hp']
+        else:
+            hp = 100
+        if 'speed' in monster:
+            speed = monster['speed']
+        else:
+            speed = 2
+        mon = Monster(monster['file'],
+                      self,
+                      monster['path'],
+                      flying,
+                      shooting,
+                      s_speed,
+                      hp,
+                      speed
+                      )
+        mon.rect.x = int(location['x'])*50
+        mon.rect.y = int(location['y'])*50
+        mon.type = monster['type']
+        return mon
+
     def build_platforms(self):
         p_list = []
         for p in self.platforms:
@@ -193,22 +227,17 @@ class Level:
     def build_monsters(self):
         m_group = pygame.sprite.Group()
         for monster in self.monsters:
-            for location in monster['location']:
-                if monster['flying']=='True':
-                    flying = True
-                else:
-                    flying = False
-                mon = Monster(monster['file'],
-                              self,
-                              monster['path'],
-                              monster['track'],
-                              flying)
-                mon.rect.x = int(location['x'])*50
-                mon.rect.y = int(location['y'])*50
-                mon.type = monster['type']
-                m_group.add(mon)
+            if monster['type'] == "boss":
+                self.boss = True
+                self.boss_mob = self.build_mob(monster, monster['location'])
+            else:
+                for location in monster['location']:
+                    mon = self.build_mob(monster, location)
+                    m_group.add(mon)
         return m_group
             
     def load_door(self, x, y):
         self.player_x = x
         self.player_y = y
+
+    

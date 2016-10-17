@@ -4,16 +4,19 @@ from pawn import Pawn
 
 class Monster(Pawn):
 
-    def __init__(self, build_json, level, move_cycle, track_size, flying = False):
-        self._monster_hp = 100
+    def __init__(self, build_json, level, move_cycle, flying, shooting,
+                 s_speed, hp, speed):
+        self._monster_hp = hp
         self._monster_damage = 10
         self._monster_track = 0
         self.cycle_frame = 0
+        self.move_speed = speed
         self._falling = True
         self._flying = flying
+        self._shooting = shooting
+        self._shooting_speed = s_speed
         self._monster_direction = "L"
         self._monster_cycle = move_cycle
-        self._track_size = track_size
         Pawn.__init__(self, build_json, level)
         self._right_catch = pygame.Rect(constants.DWIDTH+55, -10, 50, constants.DHEIGHT+20)
         self._left_catch = pygame.Rect(-55, -10, 50, constants.DHEIGHT+20)
@@ -29,8 +32,13 @@ class Monster(Pawn):
             bump_list = pygame.sprite.spritecollide(self, monsters, False)
             for bump in bump_list:
                 if not(self == bump):
-                    self.flip()
                     self._change_x = -self._change_x
+                    if self._monster_direction == "R":
+                        self.flip()
+                        self.rect.right = bump.rect.left - self.move_speed
+                    elif self._monster_direction == "L" :
+                        self.flip()
+                        self.rect.left = bump.rect.right + self.move_speed
             self.ai()
             if not(self._flying):
                 self._change_y += 5
@@ -46,13 +54,12 @@ class Monster(Pawn):
             for plat in plat_list:
                 if self._monster_direction == "R":
                     self.flip()
-                    self.rect.right = plat.rect.left - 2
-                if self._monster_direction == "L" :
+                    self.rect.right = plat.rect.left - self.move_speed
+                elif self._monster_direction == "L" :
                     self.flip()
-                    self.rect.left = plat.rect.right + 2
+                    self.rect.left = plat.rect.right + self.move_speed
             self.rect.y += self._change_y
             self.colide(0, self._change_y, platform_set)
-            print(self._monster_direction, self.rect)
             if self._right_catch.contains(self.rect):
                 self.kill()
             if self._left_catch.contains(self.rect):
@@ -62,6 +69,8 @@ class Monster(Pawn):
 
     def draw(self):
         cycle = self.cycle['walk']
+        if self._shooting:
+            cycle = self.cycle['shooting']
         cycleNum = int(self.cycle_frame / 5)
         if cycleNum >= (len(cycle)-1):
             self.cycle_frame = 0
@@ -69,13 +78,16 @@ class Monster(Pawn):
         frame = cycle[cycleNum]
         image = self.sprite_list[frame].copy()
         self.cycle_frame = self.cycle_frame + 1
+        if self._monster_direction == "L":
+            image = pygame.transform.flip(image, True, False)
         return image
         
     def ai(self):
         move = {"D": self.go_down,
                 "U": self.go_up,
                 "L": self.go_left,
-                "R": self.go_right}
+                "R": self.go_right,
+                "Jump": self.jump}
         move[self._monster_direction]()
         
     def flip(self):
@@ -87,12 +99,12 @@ class Monster(Pawn):
             self._flip = False
         
     def go_left(self):
-        self._change_x = -2
+        self._change_x = -self.move_speed
         self._monster_track += 1
 
     def go_right(self):
         """ Called when the user hits the right arrow. """
-        self._change_x = 2
+        self._change_x = self.move_speed
         self._monster_track += 1
 
     def go_up(self):
@@ -102,6 +114,15 @@ class Monster(Pawn):
     def go_down(self):
         self._change_y = 12
         self._monster_track += 1
+
+    def jump(self):
+        if not self._falling:
+            self._change_y = -60
+            self._falling = True
+
+    def shoot(self):
+        self._shooting = False
+        return [self.direction, self.rect.x, self.rect.y]
 
     def take_damage(self, dam):
         self._monster_hp = self._monster_hp - dam
@@ -141,3 +162,9 @@ class Monster(Pawn):
             return True
         else:
             return False
+
+    def get_life(self):
+        return self._monster_hp
+
+    def get_max_life(self):
+        return self._monster_max_hp
