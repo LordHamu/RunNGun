@@ -11,7 +11,7 @@ from player import Player
 from camera import Camera
 from level import Level, Platform, Bullet
 from text import Text
-from menu import Menu
+from menu import Menu, Game_Menu
 from hpbar import Lifebar
 from pawn import Pawn
 from os import listdir
@@ -19,6 +19,7 @@ from os import listdir
 class Game:
 
     def __init__(self):
+        self._debug = True
         self._pause = False
         self.character = "character\\megaman.json"
         self.backdrop = constants.BLACK
@@ -32,14 +33,13 @@ class Game:
         self.moving_platforms_list = pygame.sprite.Group()
         self.spawners = []
         self.ui_lifebar = []
-        self.object_lookup = {}
         self.object_list = {}
         self.create_objects()
         self.ui_list = []
-        self.load_menu()
+        self.load_splash()
 
     #GAME
-    def load_menu(self):
+    def load_splash(self):
         self.clear()
         self.add_title("Run & Gun")
         self.add_button("New",(constants.DWIDTH/2)-50, 350, 100,50,
@@ -78,7 +78,7 @@ class Game:
         if self.level.boss:
             self.boss = self.level.boss_mob
             self.monster_sprite_list.add(self.boss)
-            self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss.get_max_life())
+            self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss)
 
     def reload_level(self):
         monsters = self.monster_sprite_list
@@ -93,10 +93,10 @@ class Game:
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, "R")
         self.add_camera()
+        self.player.set_life(player_hp)
         self.add_lifebar(25, 25, 'player', self.player)
         if self.level.boss:
             self.boss = self.level.boss_mob
-            self.object_lookup['boss'] = self.boss
             self.monster_sprite_list.add(self.boss)
             self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss)
 
@@ -150,7 +150,6 @@ class Game:
         self.player.rect.y = y
         self.player.direction = d
         self.player_sprite_list.add(self.player)
-        self.object_lookup['player'] = self.player
     
     #Helper functions
         
@@ -228,6 +227,15 @@ class Game:
                 self.load_level(self.current_level)
             if self.check_dead():
                 self.character_death()
+            for spawner in self.spawners:
+                spawn = spawner.update()
+                if spawn == False:
+                    pass
+                elif spawn[0] == "Platform":
+                    pawn_type = self.object_list[spawn[1]]
+                    self.add_platform(pawn_type, spawn[2], spawn[3])
+                else:
+                    pass
         if hasattr(self, 'camera'):
             self.camera.update(self.player)
         if hasattr(self, 'ui_lifebar'):
@@ -236,16 +244,12 @@ class Game:
                     lifebar[1].update(self.player)
                 if lifebar[0] == 'boss':
                     lifebar[1].update(self.boss)
-        for spawner in self.spawners:
-            spawn = spawner.update()
-            if spawn == False:
-                pass
-            elif spawn[0] == "Platform":
-                pawn_type = self.object_list[spawn[1]]
-                self.add_platform(pawn_type, spawn[2], spawn[3])
-            else:
-                pass
-        
+        if hasattr(self, 'boss'):
+            self.boss.update(self.platform_sprite_list,
+                            self.moving_platforms_list,
+                            self.bullet_sprite_list.sprites(),
+                            self.monster_sprite_list.sprites(),
+                            self.camera)        
         
     def draw(self, screen):
         #Only draw whats actually on camera
@@ -263,6 +267,8 @@ class Game:
             screen.blit(player.draw(), self.camera.apply(player))
         for m_platform in self.moving_platforms_list:
             screen.blit(m_platform.draw(), self.camera.apply(m_platform))
+        if hasattr(self, 'boss'):
+            screen.blit(self.boss.draw(), self.camera.apply(self.boss))
         #all ways draw the UI
         for ui in self.ui_list:
             if ui['type'] == 'button':
@@ -285,52 +291,86 @@ class Game:
     # Giant Tree of Input parsing!
 
     def on_event(self, event):
+        if hasattr(self, 'player'):
+            self.game_event(event)
+        else:
+            self.menu_event(event)
+
+    def menu_event(self, event):
         if event.type == pygame.QUIT:
            self._running = False
         if event.type == KEYDOWN:
             if event.key == K_LEFT:
-                if hasattr(self, 'player'):
-                    self.player.go_left()
+                #Left
+                pass
             if event.key == K_RIGHT:
-                if hasattr(self, 'player'):
-                    self.player.go_right()
+                #Right
+                pass
             if event.key == K_UP:
-                if hasattr(self, 'player'):
-                    self.player.go_up(self.ladder_sprite_list)
+                #Up
+                pass
             if event.key == K_DOWN:
-                if hasattr(self, 'player'):
-                    self.player.go_down(self.ladder_sprite_list)
+                #Down
+                pass
             if event.key == ord('x'):
-                if hasattr(self, 'player'):
-                    self.player.jump()
+                #x
+                pass
             if event.key == ord('z'):
-                if hasattr(self, 'player'):
-                    self.add_bullet(self.player.shoot())
+                #z
+                pass
         if event.type == KEYUP:
             if event.key == K_ESCAPE:
-                    self.exit_game()
+                self.exit_game()
             if event.key == K_LEFT:
-                if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list, 'left')
+                #Left
+                pass
             if event.key == K_RIGHT:
-                if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list, 'right')
+                #Right
+                pass
             if event.key == K_UP:
-                if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list, 'up')
+                #Up
+                pass
             if event.key == K_DOWN:
-                if hasattr(self, 'player'):
-                    self.player.stop(self.ladder_sprite_list, 'down')
+                #Down
+                pass
+
+    def game_event(self, event):
+        if event.type == pygame.QUIT:
+           self._running = False
+        if event.type == KEYDOWN:
+            if event.key == K_LEFT:
+                self.player.go_left()
+            if event.key == K_RIGHT:
+                self.player.go_right()
+            if event.key == K_UP:
+                self.player.go_up(self.ladder_sprite_list)
+            if event.key == K_DOWN:
+                self.player.go_down(self.ladder_sprite_list)
+            if event.key == ord('x'):
+                self.player.jump()
+            if event.key == ord('z'):
+                self.add_bullet(self.player.shoot())
+        if event.type == KEYUP:
+            if event.key == K_ESCAPE:
+                self.exit_game()
+            if event.key == K_LEFT:
+                self.player.stop(self.ladder_sprite_list, 'left')
+            if event.key == K_RIGHT:
+                self.player.stop(self.ladder_sprite_list, 'right')
+            if event.key == K_UP:
+                self.player.stop(self.ladder_sprite_list, 'up')
+            if event.key == K_DOWN:
+                self.player.stop(self.ladder_sprite_list, 'down')
             if event.key == ord('x'):
                 pass
             if event.key == ord('z'):
-                if hasattr(self, 'player'):
-                    self.player.stop_shoot()
+                self.player.stop_shoot()
             if event.key == ord('q'):
                 if self._pause:
                     self.resume()
                 else:
                     self.pause()
             if event.key == ord('r'):
-                self.game_menu.load_json()
-                self.load_level(self.current_level)
+                if self._debug:
+                    self.game_menu.load_json()
+                    self.load_level(self.current_level)

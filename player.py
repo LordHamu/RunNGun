@@ -203,6 +203,10 @@ class Player(Pawn):
                     self.rect.top = platform.rect.bottom + 1
                     self._change_y = 0
 
+    def set_life(self, hp):
+        self._player_hp = hp
+        return True
+    
     def get_life(self):
         return self._player_hp
 

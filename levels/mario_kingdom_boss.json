@@ -1,6 +1,6 @@
 {
 	"name": "Mario Boss",
-	"starter": "False",
+	"start": "False",
 	"dimensions": {
 		"width": 21,
 		"height": 20

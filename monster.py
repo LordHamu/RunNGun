@@ -6,6 +6,7 @@ class Monster(Pawn):
 
     def __init__(self, build_json, level, move_cycle, flying, shooting,
                  s_speed, hp, speed):
+        self._monster_max_hp = hp
         self._monster_hp = hp
         self._monster_damage = 10
         self._monster_track = 0

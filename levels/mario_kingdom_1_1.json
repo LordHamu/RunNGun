@@ -1,6 +1,6 @@
 {
 	"name": "Mario 1-1",
-	"starter": "True",
+	"start": "True",
 	"dimensions": {
 		"width": 215,
 		"height": 20

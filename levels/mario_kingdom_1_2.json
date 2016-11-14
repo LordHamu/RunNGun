@@ -1,6 +1,6 @@
 {
 	"name": "Mario 1-2",
-	"starter": "False",
+	"start": "False",
 	"dimensions": {
 		"width": 200,
 		"height": 20

@@ -1,11 +1,11 @@
 {
 	"name": "King_Koopa",
-	"type": "Monster",
+	"type": "Boss",
 	"animated": "True",
-	"file": ["sprites/mario_enemies.png"],
+	"file": ["sprites/bowser.gif"],
 	"rect": {
-		"width": 40,
-		"height": 40
+		"width": 60,
+		"height": 80
 	},
 	"bgcolor": {
 		"red": 240,
@@ -22,7 +22,7 @@
 		"right"
 		]
 	}, {
-		"name": "shhoot",
+		"name": "shooting",
 		"cycle": [
 		"base",
 		"right",

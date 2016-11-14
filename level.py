@@ -229,7 +229,7 @@ class Level:
         for monster in self.monsters:
             if monster['type'] == "boss":
                 self.boss = True
-                self.boss_mob = self.build_mob(monster, monster['location'])
+                self.boss_mob = self.build_mob(monster, monster['location'][0])
             else:
                 for location in monster['location']:
                     mon = self.build_mob(monster, location)
