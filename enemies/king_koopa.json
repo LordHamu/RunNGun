@@ -2,15 +2,15 @@
 	"name": "King_Koopa",
 	"type": "Boss",
 	"animated": "True",
-	"file": ["sprites/bowser.gif"],
+	"file": ["sprites/bowser.png"],
 	"rect": {
 		"width": 60,
 		"height": 80
 	},
 	"bgcolor": {
-		"red": 240,
-		"green": 123,
-		"blue": 255
+		"red": 0,
+		"green": 0,
+		"blue": 0
 	},
 	"frames": 5,
 	"cycles": [{
@@ -24,23 +24,35 @@
 	}, {
 		"name": "shooting",
 		"cycle": [
-		"base",
-		"right",
-		"base",
-		"right"
+		"shoot1",
+		"shoot2",
+		"shoot1",
+		"shoot2"
 		]
 	}],
 	"sprites": [{
-		"name": "base",
+		"name": "shoot1",
 		"x": 0,
 		"y": 0,
-		"w": 40,
-		"h": 40
+		"w": 65,
+		"h": 65
+	},{
+		"name": "shoot2",
+		"x": 65,
+		"y": 0,
+		"w": 65,
+		"h": 65
+	},{
+		"name": "base",
+		"x": 130,
+		"y": 0,
+		"w": 65,
+		"h": 65
 	},{
 		"name": "right",
-		"x": 40,
+		"x": 195,
 		"y": 0,
-		"w": 40,
-		"h": 40
+		"w": 65,
+		"h": 65
 	}]
 }

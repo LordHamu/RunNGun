@@ -45,6 +45,24 @@ class Scenery(pygame.sprite.Sprite):
         self.image.blit(tile, (0, 0))
         self.rect = self.image.get_rect()
 
+class Teleport(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = Surface((100, 150)).convert()
+        self.image.fill((0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.width = 25
+        self.rect.x = x*50+25
+        self.rect.y = y*50
+
+    def warp(self, players):
+        hit_list = pygame.sprite.spritecollide(self, players, False)
+        if len(hit_list)>0:
+            return True
+        else:
+            return False
+        
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, level, damage):
         import constants
@@ -89,6 +107,7 @@ class Level:
         self.monsters = []
         self.blocksize = 50
         self.boss = False
+        self.boss_beat = False
         tiles = self.parse_level_json(level)
         sprite_sheet = SpriteSheet(self.sprite_files)
         self.load_tile_set(tiles, sprite_sheet)
@@ -159,6 +178,7 @@ class Level:
             speed = 2
         mon = Monster(monster['file'],
                       self,
+                      monster['type'],
                       monster['path'],
                       flying,
                       shooting,
@@ -235,7 +255,21 @@ class Level:
                     mon = self.build_mob(monster, location)
                     m_group.add(mon)
         return m_group
-            
+
+    def build_teleport(self, x, y):
+        p_list = []
+        teleport = [['teleport_top_left', 0, 0, 1, 1],
+                    ['teleport_top_right', 1, 0, 1, 1],
+                    ['teleport_bottom_left',0, 4, 1, 1],
+                    ['teleport_bottom_right', 1, 4, 1, 1]]
+        for p in teleport:
+            platform = Platform(self._object_list[p[0]],p[3],p[4])
+            platform.rect.x = (int(p[1])* self.blocksize) + ( x * self.blocksize )
+            platform.rect.y = (int(p[2])* self.blocksize) + ( y * self.blocksize )
+            p_list.append(platform)
+        teleport = Teleport(x, y+1)
+        return teleport, p_list
+        
     def load_door(self, x, y):
         self.player_x = x
         self.player_y = y

@@ -10,11 +10,11 @@ executables = [
 
 build_options = {'build_exe': {'include_files':['character', 'enemies', 'levels', 'objects', 'sprites']}}
 
-results = setup(name='Run And Gun',
+setup(name='Run And Gun',
       version='0.1',
       description='Shooter Game Engine',
       options = build_options,
       executables=executables
       )
 
-print('done:', results)
+print('done')

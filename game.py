@@ -18,8 +18,8 @@ from os import listdir
 
 class Game:
 
-    def __init__(self):
-        self._debug = True
+    def __init__(self, debug=False):
+        self._debug = debug
         self._pause = False
         self.character = "character\\megaman.json"
         self.backdrop = constants.BLACK
@@ -184,6 +184,11 @@ class Game:
             del self.boss
             del self.boss_mob
 
+    def end_level(self):
+        self.clear()
+        self.load_splash()
+        #TODO: Have this cycle back to the menu and mark the level as done
+
     def pause(self):
         self._pause = True
 
@@ -196,7 +201,7 @@ class Game:
             self.reload_level()
         else:
             self.clear()
-            self.load_menu()
+            self.load_splash()
 
     def change_level(self):
         change = False
@@ -208,7 +213,12 @@ class Game:
 
     def check_dead(self):
         return self.player.player_death()
-        
+
+    def spawn_teleport(self):
+        self.teleport, plist = self.level.build_teleport(10,15)
+        self.platform_sprite_list += plist
+        return True
+
     #Pygame functions
         
     def update(self):
@@ -227,6 +237,17 @@ class Game:
                 self.load_level(self.current_level)
             if self.check_dead():
                 self.character_death()
+            if hasattr(self, 'boss') and self.boss.monster_death():
+                del self.boss
+                self.ui_lifebar.remove(self.ui_lifebar[1])
+                self.spawn_teleport()
+            if hasattr(self, 'teleport'):
+                if self.teleport.warp(self.player_sprite_list):
+                    self.end_level()
+            #Clean Up dead monsters
+            for monster in self.monster_sprite_list:
+                if monster.monster_death():
+                    monster.kill()
             for spawner in self.spawners:
                 spawn = spawner.update()
                 if spawn == False:
@@ -244,12 +265,6 @@ class Game:
                     lifebar[1].update(self.player)
                 if lifebar[0] == 'boss':
                     lifebar[1].update(self.boss)
-        if hasattr(self, 'boss'):
-            self.boss.update(self.platform_sprite_list,
-                            self.moving_platforms_list,
-                            self.bullet_sprite_list.sprites(),
-                            self.monster_sprite_list.sprites(),
-                            self.camera)        
         
     def draw(self, screen):
         #Only draw whats actually on camera
@@ -267,8 +282,6 @@ class Game:
             screen.blit(player.draw(), self.camera.apply(player))
         for m_platform in self.moving_platforms_list:
             screen.blit(m_platform.draw(), self.camera.apply(m_platform))
-        if hasattr(self, 'boss'):
-            screen.blit(self.boss.draw(), self.camera.apply(self.boss))
         #all ways draw the UI
         for ui in self.ui_list:
             if ui['type'] == 'button':

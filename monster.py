@@ -4,7 +4,7 @@ from pawn import Pawn
 
 class Monster(Pawn):
 
-    def __init__(self, build_json, level, move_cycle, flying, shooting,
+    def __init__(self, build_json, level, m_type, move_cycle, flying, shooting,
                  s_speed, hp, speed):
         self._monster_max_hp = hp
         self._monster_hp = hp
@@ -17,6 +17,7 @@ class Monster(Pawn):
         self._shooting = shooting
         self._shooting_speed = s_speed
         self._monster_direction = "L"
+        self._type = m_type
         self._monster_cycle = move_cycle
         Pawn.__init__(self, build_json, level)
         self._right_catch = pygame.Rect(constants.DWIDTH+55, -10, 50, constants.DHEIGHT+20)
@@ -88,7 +89,8 @@ class Monster(Pawn):
                 "U": self.go_up,
                 "L": self.go_left,
                 "R": self.go_right,
-                "Jump": self.jump}
+                "Jump": self.jump,
+                "Shoot": self.shoot}
         move[self._monster_direction]()
         
     def flip(self):
@@ -129,7 +131,7 @@ class Monster(Pawn):
         self._monster_hp = self._monster_hp - dam
         if self._monster_hp < 0 :
             self._monster_hp = 0
-        return self.monster_death()
+        return True
 
     def colide(self, x, y, platform_list):
         self._falling = True
@@ -159,7 +161,6 @@ class Monster(Pawn):
     
     def monster_death(self):
         if self._monster_hp == 0:
-            self.kill()
             return True
         else:
             return False
