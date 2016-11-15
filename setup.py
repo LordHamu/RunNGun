@@ -5,10 +5,10 @@ base = None
 if sys.platform == 'win32':
     base = 'Win32GUI'
 executables = [
-    Executable('gamemain.py', base=base)
+    Executable('main.py', base=base)
 ]
 
-build_options = {'build_exe': {'include-files':['character', 'enemies', 'levels', 'objects', 'sprites']}}
+build_options = {'build_exe': {'include_files':['character', 'enemies', 'levels', 'objects', 'sprites']}}
 
 results = setup(name='Run And Gun',
       version='0.1',
