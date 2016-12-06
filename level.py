@@ -194,7 +194,7 @@ class Level:
     def build_platforms(self):
         p_list = []
         for p in self.platforms:
-            for s in self.platforms["set"]:
+            for s in p['set']:
                 platform = Platform(self._object_list[p['tile']],
                                 s['w'],
                                 s['h'])
