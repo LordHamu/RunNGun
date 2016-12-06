@@ -194,12 +194,13 @@ class Level:
     def build_platforms(self):
         p_list = []
         for p in self.platforms:
-            platform = Platform(self._object_list[p['tile']],
-                                p['w'],
-                                p['h'])
-            platform.rect.x = int(p['x'])* self.blocksize
-            platform.rect.y = int(p['y'])* self.blocksize
-            p_list.append(platform)
+            for s in self.platforms["set"]:
+                platform = Platform(self._object_list[p['tile']],
+                                s['w'],
+                                s['h'])
+                platform.rect.x = int(s['x'])* self.blocksize
+                platform.rect.y = int(s['y'])* self.blocksize
+                p_list.append(platform)
         return p_list
         
     def build_ladders(self):
