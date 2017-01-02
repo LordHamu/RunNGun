@@ -2,6 +2,12 @@
 	"name": "King_Koopa",
 	"type": "Boss",
 	"animated": "True",
+	"path": ["L","L"],
+	"track": 1,
+	"flying": "False",
+	"shooting": "True",
+	"s_speed": 90,
+	"hp": 500,
 	"file": ["sprites/bowser.png"],
 	"rect": {
 		"width": 60,
@@ -31,6 +37,12 @@
 		]
 	}],
 	"sprites": [{
+		"name": "base",
+		"x": 130,
+		"y": 0,
+		"w": 65,
+		"h": 65
+	},{
 		"name": "shoot1",
 		"x": 0,
 		"y": 0,
@@ -39,12 +51,6 @@
 	},{
 		"name": "shoot2",
 		"x": 65,
-		"y": 0,
-		"w": 65,
-		"h": 65
-	},{
-		"name": "base",
-		"x": 130,
 		"y": 0,
 		"w": 65,
 		"h": 65

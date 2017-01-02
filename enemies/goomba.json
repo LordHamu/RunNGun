@@ -1,5 +1,6 @@
 {
 	"name": "Goomba",
+	"type": "henchman",
 	"type": "Monster",
 	"animated": "True",
 	"file": ["sprites/mario_enemies.png"],
@@ -34,5 +35,8 @@
 		"y": 0,
 		"w": 40,
 		"h": 40
-	}]
+	}],
+	"path": ["L","L"],
+	"track": 1,
+	"flying": "False"
 }

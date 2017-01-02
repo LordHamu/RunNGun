@@ -93,13 +93,11 @@
 	}],
 	"scenery":[],
 	"ladders":[
-	{
+		{
 		"tile": "ladder",
-		"x": 191,
-		"y": 11,
-		"w": 1,
-		"h": 8
-	}],
+		"set":[{"x": 191,"y": 11,"w": 1,"h": 8}]
+		}
+	],
 	"doors":[{
 		"level": "Mario 1-2",
 		"tile": "door",
@@ -111,7 +109,6 @@
 	}],
 	"spawners":[],
 	"monsters":[{
-		"type": "henchman",
 		"file": "enemies/goomba.json",
 		"location":[
 			{"x": 25,"y": 18}, 
@@ -128,19 +125,12 @@
 			{"x": 124,"y": 18},
 			{"x": 177,"y": 18},
 			{"x": 175,"y": 18}
-		],
-		"path": ["L","L"],
-		"track": 1,
-		"flying": "False"
+		]
 	},{
-		"type": "henchman",
 		"file": "enemies/turtle.json",
 		"location":[
 			{"x": 107,"y": 18}
-		],
-		"path": ["L","L"],
-		"track": 1,
-		"flying": "False"
+		]
 	}],
 	"platforms": [{
 		"tile": "brick",

@@ -36,7 +36,7 @@
 		"h": 50
 	},
 	{
-		"name": "door",
+		"name": "b_door",
 		"x": 350,
 		"y": 0,
 		"w": 50,
@@ -75,17 +75,10 @@
 	"doors":[],
 	"spawners":[],
 	"monsters":[{
-		"type": "boss",
 		"file": "enemies/king_koopa.json",
 		"location":[
 			{"x": 17,"y": 15}
-		],
-		"path": ["L","L"],
-		"track": 1,
-		"flying": "False",
-		"shooting": "True",
-		"s_speed": 90,
-		"hp": 500
+		]
 	}],
 	"platforms": [{
 		"tile": "brick",
@@ -103,7 +96,7 @@
 			{"x": 0,"y": 0,"w": 21,"h": 9}]
 	},
 	{
-		"tile": "door",
+		"tile": "b_door",
 		"set":[
 		{"x": 0,"y": 12,"w": 1,"h": 3}]
 	}]

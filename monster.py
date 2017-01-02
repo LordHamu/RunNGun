@@ -1,28 +1,58 @@
-import pygame, constants, sys
+import pygame, constants, sys, json
 from pygame.locals import *
 from pawn import Pawn
 
 class Monster(Pawn):
 
-    def __init__(self, build_json, level, m_type, move_cycle, flying, shooting,
-                 s_speed, hp, speed):
-        self._monster_max_hp = hp
-        self._monster_hp = hp
-        self._monster_damage = 10
+    def __init__(self, build_json, level):
+        self.setup_monster(build_json)
         self._monster_track = 0
         self.cycle_frame = 0
-        self.move_speed = speed
         self._falling = True
-        self._flying = flying
-        self._shooting = shooting
-        self._shooting_speed = s_speed
         self._monster_direction = "L"
-        self._type = m_type
-        self._monster_cycle = move_cycle
+        
         Pawn.__init__(self, build_json, level)
         self._right_catch = pygame.Rect(constants.DWIDTH+55, -10, 50, constants.DHEIGHT+20)
         self._left_catch = pygame.Rect(-55, -10, 50, constants.DHEIGHT+20)
-        self._bottom_catch = pygame.Rect(-10, constants.DHEIGHT+10, constants.DWIDTH+20, 50) 
+        self._bottom_catch = pygame.Rect(-10, constants.DHEIGHT+10, constants.DWIDTH+20, 50)
+
+    def setup_monster(self, fname):
+        with open(fname) as data_file:
+            monster = json.load(data_file) 
+        if 'type' in monster:
+            self._type = monster['type']
+            if monster['type'] == "Boss":
+                self.boss = True
+            else:
+                self.boss = False
+        else:
+            self._type = "None"
+        if monster['flying']=='True':
+            self._flying = True
+        else:
+            self._flying = False
+        if 'shooting' in monster and monster['shooting'] == 'True':
+            self._shooting = True
+            self._shooting_speed = monster['s_speed']
+        else:
+            self._shooting = False
+            self._shooting_speed = 0
+        if 'hp' in monster:
+            self._monster_max_hp = monster['hp']
+            self._monster_hp = self._monster_max_hp
+        else:
+            self._monster_max_hp = 100
+            self._monster_hp = self._monster_max_hp
+        if 'speed' in monster:
+            self.move_speed = monster['speed']
+        else:
+            self.move_speed = 2
+        if 'damange' in monster:
+            self._monster_damage = monster['damage']
+        else:
+            self._monster_damage = 10
+        self._monster_cycle = monster['path']
+        
         
     def update(self, m_platforms, platforms, bullets, monsters, camera):
         if camera.on_camera(self):
@@ -161,6 +191,12 @@ class Monster(Pawn):
     
     def monster_death(self):
         if self._monster_hp == 0:
+            return True
+        else:
+            return False
+        
+    def is_boss(self):
+        if self._type == "Boss":
             return True
         else:
             return False

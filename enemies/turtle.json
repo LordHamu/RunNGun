@@ -1,7 +1,10 @@
 {
 	"name": "Koopa Troopa Green",
-	"type": "Monster",
+	"type": "henchman",
 	"animated": "True",
+	"path": ["L","L"],
+	"track": 1,
+	"flying": "False",
 	"file": ["sprites/mario_enemies.png"],
 	"rect": {
 		"width": 40,

@@ -104,6 +104,7 @@ class Level:
         self.ladders = []
         self.doors = []
         self.spawners = []
+        self.scenery = []
         self.monsters = []
         self.blocksize = 50
         self.boss = False
@@ -158,37 +159,15 @@ class Level:
         return file_json
     
     def build_mob(self, monster, location):
-        if monster['flying']=='True':
-            flying = True
-        else:
-            flying = False
-        if 'shooting' in monster and monster['shooting'] == 'True':
-            shooting = True
-            s_speed = monster['s_speed']
-        else:
-            shooting = False
-            s_speed = 0
-        if 'hp' in monster:
-            hp = monster['hp']
-        else:
-            hp = 100
-        if 'speed' in monster:
-            speed = monster['speed']
-        else:
-            speed = 2
-        mon = Monster(monster['file'],
-                      self,
-                      monster['type'],
-                      monster['path'],
-                      flying,
-                      shooting,
-                      s_speed,
-                      hp,
-                      speed
-                      )
+        mon = Monster(monster['file'],self)
         mon.rect.x = int(location['x'])*50
         mon.rect.y = int(location['y'])*50
-        mon.type = monster['type']
+        if mon.is_boss():
+            self.boss = True
+            if self.boss_beat:
+                return False
+            else:
+                self.boss_mob = mon
         return mon
 
     def build_platforms(self):
@@ -206,17 +185,18 @@ class Level:
     def build_ladders(self):
         l_list = []
         for l in self.ladders:
-            ladder = Platform(self._object_list[l['tile']],
-                                int(l['w']),
-                                int(l['h']))
-            ladder.rect.x = int(l['x'])* self.blocksize
-            ladder.rect.y = int(l['y'])* self.blocksize
-            l_list.append(ladder)
+            for s in l['set']:
+                ladder = Platform(self._object_list[l['tile']],
+                                    int(s['w']),
+                                    int(s['h']))
+                ladder.rect.x = int(s['x'])* self.blocksize
+                ladder.rect.y = int(s['y'])* self.blocksize
+                l_list.append(ladder)
         return l_list
     
     def build_scenery(self):
         s_list = []
-        for s in self.ladders:
+        for s in self.scenery:
             bgobject = Scenery(self._object_list[s['tile']],
                                 int(s['w']),
                                 int(s['h']))
@@ -248,12 +228,9 @@ class Level:
     def build_monsters(self):
         m_group = pygame.sprite.Group()
         for monster in self.monsters:
-            if monster['type'] == "boss":
-                self.boss = True
-                self.boss_mob = self.build_mob(monster, monster['location'][0])
-            else:
-                for location in monster['location']:
-                    mon = self.build_mob(monster, location)
+            for location in monster['location']:
+                mon = self.build_mob(monster, location)
+                if mon != False:
                     m_group.add(mon)
         return m_group
 
