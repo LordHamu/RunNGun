@@ -36,6 +36,9 @@ class Game:
         self.object_list = {}
         self.create_objects()
         self.ui_list = []
+        self.main_menu = Menu()
+        self.menu_flag = True
+        self.start_level = None
         self.load_splash()
 
     #GAME
@@ -50,17 +53,22 @@ class Game:
     def start_game(self):
         self.clear()
         self.lives = 3
-        self.game_menu = Menu()
-        self.current_level = ['Mario 1-1', 0, 0, "R"]
-        self.load_level(self.current_level)
+        self.ui_list += self.main_menu.draw_menu()
+        self.current_level = [self.main_menu.selected_name(), 0, 0, "R"]
         
     def exit_game(self):
         pygame.quit()
         sys.exit()
 
     def load_level(self, level):
+        if self.start_level == None:
+            self.start_level = level[0]
+        self.menu_flag = False
+        player_hp = 0
+        if hasattr(self, 'player'):
+            player_hp = self.player.get_life()
         self.clear()
-        self.level = Level(self.game_menu.get_level_json(level[0]))
+        self.level = Level(self.main_menu.get_level_json(level[0]))
         if level[1] != 0:
             self.level.player_x = level[1]
         if level[2] != 0:
@@ -73,9 +81,11 @@ class Game:
         self.spawners = self.level.build_spawners()
         self.backdrop = self.level.backdrop
         self.add_player(self.character, self.level.player_x, self.level.player_y, level[3])
+        if player_hp > 0:
+            self.player.set_life(player_hp)
         self.add_camera()
         self.add_lifebar(25, 25, 'player', self.player)
-        if self.level.boss:
+        if self.level.boss and not(self.main_menu.boss_check(self.start_level)):
             self.boss = self.level.boss_mob
             self.monster_sprite_list.add(self.boss)
             self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss)
@@ -83,6 +93,7 @@ class Game:
     def reload_level(self):
         monsters = self.monster_sprite_list
         player_hp = self.player.get_life()
+        self.menu_flag = False
         self.clear()
         self.monster_sprite_list = monsters
         self.scenery_sprite_list = self.level.build_scenery()
@@ -95,7 +106,7 @@ class Game:
         self.add_camera()
         self.player.set_life(player_hp)
         self.add_lifebar(25, 25, 'player', self.player)
-        if self.level.boss:
+        if self.level.boss and not(self.main_menu.boss_check(self.start_level)):
             self.boss = self.level.boss_mob
             self.monster_sprite_list.add(self.boss)
             self.add_lifebar(constants.DWIDTH - 50, 25, 'boss', self.boss)
@@ -185,10 +196,12 @@ class Game:
             del self.boss_mob
 
     def end_level(self):
+        self.main_menu.finished_level(self.start_level)
+        self.start_level = None
         self.clear()
-        self.load_splash()
-        #TODO: Have this cycle back to the menu and mark the level as done
-
+        self.menu_flag = True
+        self.ui_list += self.main_menu.draw_menu()
+        
     def pause(self):
         self._pause = True
 
@@ -197,11 +210,12 @@ class Game:
 
     def character_death(self):
         if self.lives > 0:
-            self.lives += -1
+            self.lives -= 1
+            self.player.set_life(self.player.get_max_life())
             self.reload_level()
         else:
             self.clear()
-            self.load_splash()
+            self.ui_list += self.main_menu.draw_menu()
 
     def change_level(self):
         change = False
@@ -282,7 +296,7 @@ class Game:
             screen.blit(player.draw(), self.camera.apply(player))
         for m_platform in self.moving_platforms_list:
             screen.blit(m_platform.draw(), self.camera.apply(m_platform))
-        #all ways draw the UI
+        #always draw the UI
         for ui in self.ui_list:
             if ui['type'] == 'button':
                 mouse = pygame.mouse.get_pos()
@@ -295,7 +309,11 @@ class Game:
                 else:
                     pygame.draw.rect(screen, ui['ic'],rect)
             else:
-                screen.blit(ui['surface'],ui['rectangle'])
+                try:
+                    screen.blit(ui['surface'],ui['rectangle'])
+                except:
+                    print(ui['type'])
+                    raise
         if hasattr(self, 'ui_lifebar'):
             for lifebar in self.ui_lifebar:
                 screen = lifebar[1].draw(screen)
@@ -304,10 +322,14 @@ class Game:
     # Giant Tree of Input parsing!
 
     def on_event(self, event):
-        if hasattr(self, 'player'):
-            self.game_event(event)
-        else:
+        if self.menu_flag:
             self.menu_event(event)
+        else:
+            if hasattr(self, 'player'):
+                self.game_event(event)
+            else:
+                print("Dropped Command.")
+                    
 
     def menu_event(self, event):
         if event.type == pygame.QUIT:
@@ -336,16 +358,22 @@ class Game:
                 self.exit_game()
             if event.key == K_LEFT:
                 #Left
-                pass
+                self.main_menu.up()
+                self.current_level = [self.main_menu.selected_name(), 0, 0, "R"]
             if event.key == K_RIGHT:
                 #Right
-                pass
+                self.main_menu.down()
+                self.current_level = [self.main_menu.selected_name(), 0, 0, "R"]
             if event.key == K_UP:
                 #Up
-                pass
+                self.main_menu.up()
+                self.current_level = [self.main_menu.selected_name(), 0, 0, "R"]
             if event.key == K_DOWN:
                 #Down
-                pass
+                self.main_menu.down()
+                self.current_level = [self.main_menu.selected_name(), 0, 0, "R"]
+            if event.key == ord('z'):
+                self.load_level(self.current_level)
 
     def game_event(self, event):
         if event.type == pygame.QUIT:
@@ -385,5 +413,5 @@ class Game:
                     self.pause()
             if event.key == ord('r'):
                 if self._debug:
-                    self.game_menu.load_json()
+                    self.main_menu.load_json()
                     self.load_level(self.current_level)

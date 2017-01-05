@@ -42,6 +42,7 @@ class GameMain:
 
     def on_cleanup(self):
         pygame.quit()
+        sys.exit()
 
     def on_execute(self):
         try:

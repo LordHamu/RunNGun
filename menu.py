@@ -6,6 +6,9 @@ class Menu:
     def __init__(self):
         self.level_json_list = {}
         self.level_list = []
+        self.completed = {}
+        self.icon_list = {}
+        self.menu_item = 0
         self.load_json()
         if len(self.level_list) > 0:
             self.selected = self.level_list[0]
@@ -25,14 +28,58 @@ class Menu:
                 if 'start' in data:
                     if data['start'] == 'True':
                         self.level_list.append(data['name'])
+                        self.completed[data['name']] = False
+                        #icon = self.load_icon(data['menu_tile'])
+                        #self.icon_list[data['name']] = icon
                 else:
                     print(data['name'], "No start")
 
-    def draw_text(self, text, x, y):
-        TextSurf, TextRect = Text.text_objects(title, constants.largeText, constants.WHITE)
-        TextRect.center = (x, y)
-        self.ui_list.append({'title':title, 'type': 'text','surface':TextSurf,'rectangle':TextRect})
+    def load_icon(self, icon_file):
+        pass
 
+    def draw_menu(self):
+        menu = []
+        #add the menu options
+        for x in range(len(self.level_list)):
+            text = self.level_list[x]
+            TextSurf, TextRect = Text.text_objects(text, constants.menuText,
+                                                   constants.WHITE)
+            TextRect.center = ((constants.DWIDTH / 4), (100+(x*50)))
+            menu.append({'title': text, 'type':'menu',
+                         'surface':TextSurf, 'rectangle': TextRect})
+        #add the menu icon
+        #IconRect = Rect((constants.DWIDTH*.75), (constants.DHEIGHT/4), 100, 100)
+        #menu.append({'type':'icon', 'title':'Level_Icon', 'rectangle':IconRect})
+        return menu
+
+    def selected_name(self):
+        name = self.level_list[self.menu_item]
+        return name
+
+    def fetch_icon(self, name):
+        return self.icon_list[name]
+
+    def finished_level(self, name):
+        if name in self.completed.keys():
+            self.completed[name] = True
+
+    def boss_check(self, name):
+        if name in self.completed.keys():
+            return self.completed[name]
+        else:
+            print("Couldn't find the key")
+            return False
+
+    def up(self):
+        if self.menu_item > 0:
+            self.menu_item -= 1
+        return True
+
+    def down(self):
+        if self.menu_item < len(self.level_list)-1:
+            self.menu_item +=1
+        return True
+         
 class Game_Menu:
     def __init__(self):
         pass

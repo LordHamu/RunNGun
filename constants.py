@@ -16,6 +16,7 @@ RED      = (255,0,0)
 # Text Fonts
 smallText = pygame.font.Font(arial, 20)
 largeText = pygame.font.Font(arial,115)
+menuText = pygame.font.Font(arial, 25)
 
 # Screen dimensions
 DWIDTH        = 1024
