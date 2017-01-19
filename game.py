@@ -64,15 +64,15 @@ class Game:
         if self.start_level == None:
             self.start_level = level[0]
         self.menu_flag = False
-        player_hp = 0
+        player_hp = -1
         if hasattr(self, 'player'):
             player_hp = self.player.get_life()
         self.clear()
         self.level = Level(self.main_menu.get_level_json(level[0]))
         if level[1] != 0:
-            self.level.player_x = level[1]
+            self.level.player_x = int(level[1])
         if level[2] != 0:
-            self.level.player_y = level[2]
+            self.level.player_y = int(level[2])
         self.scenery_sprite_list = self.level.build_scenery()
         self.platform_sprite_list = self.level.build_platforms()
         self.ladder_sprite_list = self.level.build_ladders()
@@ -80,7 +80,8 @@ class Game:
         self.monster_sprite_list = self.level.build_monsters()
         self.spawners = self.level.build_spawners()
         self.backdrop = self.level.backdrop
-        self.add_player(self.character, self.level.player_x, self.level.player_y, level[3])
+        self.add_player(self.character, self.level.player_x,
+                        self.level.player_y, level[3])
         if player_hp > 0:
             self.player.set_life(player_hp)
         self.add_camera()
@@ -157,8 +158,8 @@ class Game:
         
     def add_player(self, json, x, y, d):
         self.player = Player(json, self.level)
-        self.player.rect.x = x
-        self.player.rect.y = y
+        rect = self.player.set_xy(x, y)
+        print(rect)
         self.player.direction = d
         self.player_sprite_list.add(self.player)
     
@@ -219,7 +220,8 @@ class Game:
 
     def change_level(self):
         change = False
-        hits_list = pygame.sprite.spritecollide(self.player, self.door_sprite_list, False)
+        hits_list = pygame.sprite.spritecollide(self.player,
+                                                self.door_sprite_list, False)
         for hit in hits_list:
             self.current_level = [hit.level, hit.px, hit.py, hit.dir]
             change = True
@@ -248,6 +250,7 @@ class Game:
                                             self.camera)
             self.bullet_sprite_list.update(self.platform_sprite_list)
             if self.change_level():
+                print("Changing level:", self.current_level)
                 self.load_level(self.current_level)
             if self.check_dead():
                 self.character_death()

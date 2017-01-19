@@ -233,3 +233,10 @@ class Player(Pawn):
         else:
             return False
         
+    def set_xy(self, x, y):
+        try:
+            self.rect.x = int(x)
+            self.rect.y = int(y)
+        except:
+            raise
+        return self.rect
